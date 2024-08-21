@@ -53,12 +53,15 @@ android {
 
 dependencies {
 
-    val room_version = "2.6.1"
+// Retrofit
+    implementation(libs.retrofit)
+// Retrofit with Scalar Converter
+    implementation(libs.converter.scalars)
 
 //    room
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
