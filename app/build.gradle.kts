@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 //    id("com.google.devtools.ksp") version "2.0.10-1.0.24"
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
 android {
@@ -52,16 +53,20 @@ android {
 }
 
 dependencies {
-
 // Retrofit
     implementation(libs.retrofit)
-// Retrofit with Scalar Converter
-    implementation(libs.converter.scalars)
+//    Serialization
+    implementation(libs.kotlinx.serialization.json)
+// Retrofit with Kotlin serialization Converter
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.okhttp)
 
 //    room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
+//  @inject
+    implementation (libs.javax.inject)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

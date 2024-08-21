@@ -17,6 +17,9 @@ interface FormDao {
     @Upsert
     suspend fun upsert(task: LocalFormData)
 
+    @Upsert
+    suspend fun upsertAll(tasks: List<LocalFormData>)
+
     @Query("SELECT * FROM FormData WHERE optionName LIKE :option")
     fun findByName(option: String): LocalFormData
 
@@ -28,9 +31,6 @@ interface FormDao {
 //    @Insert
 //    fun insertAll(vararg options: localFormData)
 
-
-//    @Upsert
-//    suspend fun upsertAll(tasks: List<LocalTask>)
 
 //    @Query("UPDATE task SET isCompleted = :completed WHERE id = :taskId")
 //    suspend fun updateCompleted(taskId: String, completed: Boolean)

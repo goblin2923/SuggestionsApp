@@ -29,7 +29,7 @@ class fromTest {
     fun insertTaskAndGetTasks() = runTest {
 
         val task = LocalFormData(
-            id = 0,
+            id = "0",
             optionName = "Get hekp",
             votes = 10
         )
@@ -37,6 +37,6 @@ class fromTest {
 
         val tasks = database.formDao().observeAll().first()
 
-        assertEquals(0, tasks.size)
+        assertEquals(1, tasks.size)
     }
 }
