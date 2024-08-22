@@ -9,7 +9,7 @@ class FormNetworkDataSource @Inject constructor() {
 
     // A mutex is used to ensure that reads and writes are thread-safe.
     private val accessMutex = Mutex()
-    private var tasks = listOf(
+    private var forms = listOf(
         NetworkForm(
             id = "0",
             optionName = "Painting",
@@ -24,13 +24,13 @@ class FormNetworkDataSource @Inject constructor() {
 
     suspend fun loadTasks(): List<NetworkForm> = accessMutex.withLock {
         delay(SERVICE_LATENCY_IN_MILLIS)
-        return tasks
+        return forms
     }
 
-    suspend fun saveTasks(newTasks: List<NetworkForm>) = accessMutex.withLock {
-        delay(SERVICE_LATENCY_IN_MILLIS)
-        tasks = newTasks
-    }
+//    suspend fun saveTasks(newTasks: NetworkForm) = accessMutex.withLock {
+//        delay(SERVICE_LATENCY_IN_MILLIS)
+//        forms = newTasks
+//    }
 
 }
 

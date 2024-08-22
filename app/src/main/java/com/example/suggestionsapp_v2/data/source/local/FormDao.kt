@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FormDao {
     @Query("SELECT * FROM FormData")
-    fun observeAll(): Flow<List<LocalFormData>>
+    fun observeAll(): List<LocalFormData>
 
     @Query("SELECT * FROM FormData WHERE id IN (:userIds)")
     fun loadAllByIds(userIds: IntArray): List<LocalFormData>
