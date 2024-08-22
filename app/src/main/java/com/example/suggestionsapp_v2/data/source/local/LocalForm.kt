@@ -1,49 +1,46 @@
 package com.example.suggestionsapp_v2.data.source.local
 
-import androidx.compose.ui.graphics.Color
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.example.suggestionsapp_v2.data.source.Form
+import com.example.suggestionsapp_v2.data.source.FormData
 import com.example.suggestionsapp_v2.data.source.network.NetworkForm
 
-@Entity(
-    tableName = "FormData"
-)
-data class LocalFormData (
-    @PrimaryKey val id: String,
-    val optionName: String = "",
-//    val color: Color? = Color.Red,
-    var votes: Int
-){
+//@Entity(tableName = "FormData")
+//data class LocalFormData (
+//    @PrimaryKey val id: String,
+//    val optionName: String = "",
+//    val votes: Int,
+//    val color: Int
+//)
 
-}
-
-fun LocalFormData.toExternal() = Form(
-    fId = id,
+fun FormData.toExternal() = FormData(
+    fId = fId,
     optionName = optionName,
-    votes = votes
+    votes = votes,
+    color = color
 )
-fun List<LocalFormData>.toExternal() = map(LocalFormData::toExternal) // Equivalent to map { it.toExternal() }
+fun List<FormData>.toExternal() = map(FormData::toExternal) // Equivalent to map { it.toExternal() }
 
-fun Form.toLocal() = LocalFormData(
-    id = fId,
+fun FormData.toLocal() = FormData(
+    fId =  fId,
     optionName = optionName,
-    votes = votes
+    votes = votes,
+    color = color
 )
-fun List<Form>.toLocal() = map(Form::toLocal)
+//fun List<Form>.toLocal() = map(Form::toLocal)
+//
 
-
-fun NetworkForm.toLocal() = LocalFormData(
-    id = id,
+fun NetworkForm.toLocal() = FormData(
+    fId =  fId,
     optionName = optionName,
-    votes = votes
+    votes = votes,
+    color = color
 )
-fun List<NetworkForm>.toLocal() = map(NetworkForm::toLocal)
+//fun List<NetworkForm>.toLocal() = map(NetworkForm::toLocal)
 
 
-fun LocalFormData.toNetwork() = NetworkForm(
-    id = id,
+fun FormData.toNetwork() = NetworkForm(
+    fId = fId,
     optionName = optionName,
-    votes = votes
+    votes = votes,
+    color = color
 )
-fun List<LocalFormData>.toNetwork() = map(LocalFormData::toNetwork)
+fun List<FormData>.toNetwork() = map(FormData::toNetwork)

@@ -1,5 +1,7 @@
 package com.example.suggestionsapp_v2.data.source.network
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -13,12 +15,15 @@ class FormNetworkDataSource @Inject constructor() {
         NetworkForm(
             id = "0",
             optionName = "Painting",
-            shortDescription = "Paint please"
+            shortDescription = "Paint please",
+            color = Color.Blue.toArgb()
         ),
         NetworkForm(
             id = "1",
             optionName = "Mime",
-            shortDescription = "stay quiet"
+            shortDescription = "stay quiet",
+            color = Color.Blue.toArgb()
+
         )
     )
 

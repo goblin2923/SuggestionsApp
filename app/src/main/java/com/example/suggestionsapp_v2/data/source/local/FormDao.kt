@@ -3,31 +3,28 @@ package com.example.suggestionsapp_v2.data.source.local
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import kotlinx.coroutines.flow.Flow
-
+import com.example.suggestionsapp_v2.data.source.FormData
 
 @Dao
 interface FormDao {
     @Query("SELECT * FROM FormData")
-    fun observeAll(): List<LocalFormData>
-
-    @Query("SELECT * FROM FormData WHERE id IN (:userIds)")
-    fun loadAllByIds(userIds: IntArray): List<LocalFormData>
+    fun observeAll(): List<FormData>
 
     @Upsert
-    suspend fun upsert(task: LocalFormData)
+    suspend fun upsert(task: FormData)
 
     @Upsert
-    suspend fun upsertAll(tasks: List<LocalFormData>)
-
-    @Query("SELECT * FROM FormData WHERE optionName LIKE :option")
-    fun findByName(option: String): LocalFormData
+    suspend fun upsertAll(tasks: List<FormData>)
 
     @Query("DELETE FROM FormData")
     suspend fun deleteAll()
 
-//    add later, insert suggestions in db. maybe need new db
+//    @Query("SELECT * FROM FormData WHERE id IN (:userIds)")
+//    fun loadAllByIds(userIds: IntArray): List<LocalFormData>
 
+//    add later, insert suggestions in db. maybe need new db
+//    @Query("SELECT * FROM FormData WHERE optionName LIKE :option")
+//    fun findByName(option: String): LocalFormData
 //    @Insert
 //    fun insertAll(vararg options: localFormData)
 
