@@ -13,6 +13,7 @@ abstract class SuggestionsDatabase : RoomDatabase() {
     abstract val formDao: FormDao
 
     companion object {
+
         @Volatile
         var INSTANCE: SuggestionsDatabase? = null
 

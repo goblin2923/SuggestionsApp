@@ -11,15 +11,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainPageViewModel() : ViewModel() {
-
-    var formRepo: DefaultFormRepository = DefaultFormRepository()
+class MainPageViewModel(val formRepo: DefaultFormRepository = DefaultFormRepository()) : ViewModel() {
 
     private val _formDataState = MutableStateFlow<List<FormData>>(emptyList())
-    fun hekpme() {
+    init{
         viewModelScope.launch {
             _formDataState.update {
-                formRepo.getAll()
+                formRepo.getAll()!!
             }
         }
     }

@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "FormData")
 data class FormData(
+//    @PrimaryKey(autoGenerate = true) val fId: Int,
+
     @PrimaryKey val fId: String,
     val optionName: String,
     val votes: Int,

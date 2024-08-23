@@ -8,9 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
-class DefaultFormRepository() {
+class DefaultFormRepository(var localDataSource: FormDao? = SuggestionsDatabase.INSTANCE?.formDao) {
 
-    private val localDataSource: FormDao? = SuggestionsDatabase.INSTANCE?.formDao
 
     // This method might be computationally expensive
     private fun createFormId(): String {
