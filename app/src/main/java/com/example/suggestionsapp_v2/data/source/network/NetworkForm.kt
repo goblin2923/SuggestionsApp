@@ -1,7 +1,7 @@
 package com.example.suggestionsapp_v2.data.source.network
 
 data class NetworkForm(
-    val fId: String,
+    val fId: Int,
     val optionName: String,
     val shortDescription: String? = null,
     val color: Int,

@@ -13,13 +13,13 @@ class FormNetworkDataSource @Inject constructor() {
     private val accessMutex = Mutex()
     private var forms = listOf(
         NetworkForm(
-            fId = "0",
+            fId = 0,
             optionName = "Painting",
             shortDescription = "Paint please",
             color = Color.Blue.toArgb()
         ),
         NetworkForm(
-            fId = "1",
+            fId = 1,
             optionName = "Mime",
             shortDescription = "stay quiet",
             color = Color.Blue.toArgb()

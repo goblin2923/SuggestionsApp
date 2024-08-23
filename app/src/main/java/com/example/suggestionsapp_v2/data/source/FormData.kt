@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class FormData(
 //    @PrimaryKey(autoGenerate = true) val fId: Int,
 
-    @PrimaryKey val fId: String,
+    @PrimaryKey (autoGenerate = true) val fId: Int,
     val optionName: String,
     val votes: Int,
     val color: Int

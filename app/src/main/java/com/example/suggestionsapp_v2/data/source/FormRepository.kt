@@ -11,24 +11,18 @@ import java.util.UUID
 class DefaultFormRepository(var localDataSource: FormDao? = SuggestionsDatabase.INSTANCE?.formDao) {
 
 
-    // This method might be computationally expensive
-    private fun createFormId(): String {
-        return UUID.randomUUID().toString()
-    }
 
-    suspend fun create(fID: String, option: String, votes: Int, color: Int): String {
-        val formId = withContext(Dispatchers.Default) {
-            createFormId()
-        }
+
+    suspend fun create(fID: Int, option: String, votes: Int, color: Int): Int {
         val formData = FormData(
-            fId = formId,
+            fId = fID,
             optionName = option,
             votes = votes,
             color = color
         )
         localDataSource?.upsert(formData.toLocal())
 //        saveTasksToNetwork()
-        return formId
+        return fID
     }
 
 

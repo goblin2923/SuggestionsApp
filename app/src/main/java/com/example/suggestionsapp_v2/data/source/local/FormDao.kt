@@ -8,7 +8,7 @@ import com.example.suggestionsapp_v2.data.source.FormData
 @Dao
 interface FormDao {
     @Query("SELECT * FROM FormData")
-    fun observeAll(): List<FormData>
+    suspend fun observeAll(): List<FormData>
 
     @Upsert
     suspend fun upsert(task: FormData)

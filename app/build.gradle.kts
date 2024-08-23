@@ -74,7 +74,8 @@ dependencies {
 
 //    Test Dispatcher
     implementation (libs.kotlinx.coroutines.test)
-
+//    viewModel()
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 //    view model scope
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
