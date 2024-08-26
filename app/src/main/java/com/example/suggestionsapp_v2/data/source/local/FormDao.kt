@@ -6,20 +6,25 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.suggestionsapp_v2.data.source.FormData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FormDao {
 
     @Query("SELECT * FROM FormData")
-    suspend fun observeAll(): List<FormData>
+    fun observeAll(): Flow<List<FormData>>
 
     @Upsert
     suspend fun upsert(task: FormData)
 
-//    @Upsert
-//    suspend fun upsertAll(tasks: List<FormData>)
+    @Query("SELECT votes FROM FormData WHERE optionName = :option")
+    suspend fun getVotes(option: FormData.Options): Int
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Query("UPDATE FormData SET votes = votes + 1 WHERE optionName = :optionName")
+    suspend fun incrementVotes(optionName: FormData.Options)
+
+//    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(forms: List<FormData>)
 
     @Query("DELETE FROM FormData")

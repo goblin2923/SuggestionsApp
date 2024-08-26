@@ -1,23 +1,20 @@
 package com.example.suggestionsapp_v2.ui
 
-import android.view.Display
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,7 +37,11 @@ fun MainScreen(
 ) {
     val formDataState by mainScreenViewModel.formState.collectAsState()
 
-    Scaffold(topBar = {}, bottomBar = {}, floatingActionButton = {}, modifier = modifier,
+    Scaffold(
+        topBar = {},
+        bottomBar = {},
+        floatingActionButton = {},
+        modifier = modifier,
 //        containerColor = MaterialTheme.colorScheme.surface,
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -53,8 +54,6 @@ fun MainScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.padding(top=20.dp))
-            Text(text = formDataState.size.toString(), fontSize = 30.sp)
             Column(
                 modifier = modifier
                     .weight(.4f)
@@ -64,24 +63,21 @@ fun MainScreen(
                 verticalArrangement = Arrangement.Center,
 
                 ) {
-                DisplayCircle()
+                DisplayCircle(formDataState.size)
             }
             LazyColumn(
                 modifier = modifier
                     .weight(0.6f)
                     .fillMaxWidth()
-                    .padding(DEFAULT_PADDING)
-                    ,
+                    .padding(DEFAULT_PADDING),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(formDataState){ message->
-                    DisplayRow(optionName = message.optionName )
+                items(formDataState) { message ->
+                    DisplayRow(
+                        optionName = message.optionName.toString().lowercase(), votes = message.votes
+                    )
 
                 }
-//                items(3){ item -> listOf(
-//                    DisplayRow(optionName = "A", votes = 2),
-//                    DisplayRow(optionName = "B", votes = 4))
-//                }
             }
         }
     }
@@ -92,7 +88,7 @@ fun MainScreen(
 fun DisplayCircle(
 //    items: List<T>,
 //    colors: (T) -> List<Color>,
-//    votes: (T) -> List<Int>,
+    votes: Int,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -107,8 +103,10 @@ fun DisplayCircle(
         )
         Column(modifier = Modifier.align(alignment = Alignment.Center)) {
             Text(
-                text = "100",
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                text = votes.toString(),
+                fontSize = 26.sp,
+                modifier = Modifier.align(Alignment.Start)
+
             )
         }
     }
@@ -117,13 +115,15 @@ fun DisplayCircle(
 @Composable
 fun DisplayRow(
     color: Color = Color.Transparent,
-    optionName: String,
-    votes: Int= 0,
+    optionName: String = "",
+    votes: Int = 0,
     modifier: Modifier = Modifier
-){
-    Row(modifier = modifier){
-        Text(text = optionName, style = TextStyle(fontSize = 24.sp))
+) {
+    Row(modifier = modifier,
+        horizontalArrangement = Arrangement.Start) {
         Text(text = votes.toString(), style = TextStyle(fontSize = 24.sp))
+        Spacer(modifier = Modifier.padding(horizontal = 16.dp))
+        Text(text = optionName, style = TextStyle(fontSize = 24.sp))
     }
 }
 
@@ -132,7 +132,7 @@ fun DisplayRow(
 @Composable
 fun GreetingPreview() {
 
-        MainScreen()
+   MainScreen()
 }
 
 val DEFAULT_PADDING = 16.dp

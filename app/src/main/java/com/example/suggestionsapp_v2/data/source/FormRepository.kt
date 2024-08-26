@@ -17,34 +17,65 @@ class DefaultFormRepository(
 ) {
 
     suspend fun refreshForms() {
-        try{
+        try {
             val networkForms = networkDataSource.getResponses()
 
             if (networkForms.data.isNotEmpty()) {
-                localDataSource.insertAll(networkForms.data.map { formData ->
-                    FormData(
-                        optionName = formData.selectedOptions,
-                        color = getRandomColor().toArgb(),
-                        votes = calculateVotes()
-                    )
-                })
+                val formsList = mutableListOf<FormData>()
+
+                networkForms.data.forEach { formData ->
+                    val options = formData.selectedOptions.split(',').map { it.trim() }
+
+                    options.forEach { optionStr ->
+                        val option = when (optionStr) {
+                            "Painting" -> FormData.Options.PAINTING
+                            "Sketching" -> FormData.Options.SKETCHING
+                            "Mime" -> FormData.Options.MIME
+                            "Qawali night" -> FormData.Options.QAWALI
+                            "Fashion show" -> FormData.Options.FASHION
+                            else -> FormData.Options.NULL
+                        }
+
+                        if (option != FormData.Options.NULL) {
+                            val existingForm = formsList.find { it.optionName == option }
+
+                            if (existingForm != null) {
+                                val updatedForm = existingForm.copy(votes = existingForm.votes + 1)
+                                formsList[formsList.indexOf(existingForm)] = updatedForm
+                            } else {
+                                formsList.add(
+                                    FormData(
+                                        optionName = option,
+                                        votes = 1,
+                                        color = getRandomColor().toArgb()
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+
+                localDataSource.insertAll(formsList)
             }
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
 
 //        println(localDataSource?.observeAll()?.first())
-    }
 
-    suspend fun getAllForms() = localDataSource?.observeAll()
+    fun getAllForms() = localDataSource.observeAll()
 
-    private fun calculateVotes(networkDataclass: NetworkDataclass? = null): Int{
-        return 0
-    }
+
     private fun getRandomColor(): Color {
         return ColorSet.random()
     }
 
+    private suspend fun getVotes(option: FormData.Options): Int{
+        return localDataSource.getVotes(option)
+    }
 
 
 //    suspend fun create(fID: Int, option: String, votes: Int, color: Int): Int {

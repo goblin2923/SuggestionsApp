@@ -19,15 +19,15 @@ import com.example.suggestionsapp_v2.data.source.network.NetworkDataclass
 //)
 //fun List<FormData>.toNetwork() = map(FormData::toNetwork) // Equivalent to map { it.toExternal() }
 
-fun NetworkDataclass.toLocal() = FormData(
-//    fId =  fId,
-    optionName = selectedOptions,
-//    votes = votes,
-//    color = color
-)
+//fun NetworkDataclass.toLocal() = FormData(
+////    fId =  fId,
+//    optionName = selectedOptions,
+////    votes = votes,
+////    color = color
+//)
 
 
-fun List<NetworkDataclass>.toLocal() = map(NetworkDataclass::toLocal)
+//fun List<NetworkDataclass>.toLocal() = map(NetworkDataclass::toLocal)
 
 
 //fun FormData.toNetwork() = NetworkDataclass(

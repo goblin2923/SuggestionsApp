@@ -15,30 +15,26 @@ import com.example.suggestionsapp_v2.data.source.DefaultFormRepository
 import com.example.suggestionsapp_v2.data.source.FormData
 import com.example.suggestionsapp_v2.data.source.local.ColorSet
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
-    val formRepo: DefaultFormRepository = DefaultFormRepository(),
-    private val savedStateHandle: SavedStateHandle
+    val formRepo: DefaultFormRepository = DefaultFormRepository()
 ) : ViewModel() {
 
-    private val _formDataState = MutableStateFlow<List<FormData>>(emptyList())
-    val formDataState: StateFlow<List<FormData>> = _formDataState.asStateFlow()
-
+    private val _formDataState = formRepo.getAllForms()
+    val formState =
+        _formDataState.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     init {
         viewModelScope.launch {
             formRepo.refreshForms()
-            _formDataState.update {
-                formRepo.getAllForms()!!
-            }
         }
     }
-
-    val formState = _formDataState.asStateFlow()
 
     private fun getRandomColor(): Color {
         return ColorSet.random()
@@ -47,8 +43,8 @@ class MainScreenViewModel(
     private fun addColor(formDataState: List<FormData>) {
         val withColors = formDataState.map { form ->
             MainScreenUiState(
-                fId = form.fId,
-                optionName = form.optionName,
+//                fId = form.fId,
+                optionName = form.optionName.toString(),
                 votes = form.votes,
                 color = getRandomColor()
             )
@@ -60,12 +56,8 @@ class MainScreenViewModel(
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val savedStateHandle = createSavedStateHandle()
                 val defaultRepo = (this[APPLICATION_KEY] as SuggestionsApp).defaultRepo
-                MainScreenViewModel(
-                    formRepo = defaultRepo,
-                    savedStateHandle = savedStateHandle
-                )
+                MainScreenViewModel(formRepo = defaultRepo)
             }
         }
     }
