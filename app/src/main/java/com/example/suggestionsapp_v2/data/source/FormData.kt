@@ -6,12 +6,14 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "FormData")
 data class FormData(
-//    @PrimaryKey(autoGenerate = true) val fId: Int,
-
-    @PrimaryKey (autoGenerate = true) val fId: Int,
+    @PrimaryKey (autoGenerate = true) val fId: Int = 0,
     val optionName: String,
-    val votes: Int,
-    val color: Int
+    val votes: Int = 0,
+    val color: Int? = 0
 ){
+    enum class Options{
 
+    }
 }
+
+

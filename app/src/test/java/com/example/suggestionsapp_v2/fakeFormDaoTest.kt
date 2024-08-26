@@ -7,13 +7,13 @@ class fakeFormDaoTest (initialForms: List<FormData>) : FormDao{
     private val _forms = initialForms.toMutableList()
     private val formStream = _forms.toList()
 
-    override fun observeAll(): List<FormData> = formStream
+    override suspend fun observeAll(): List<FormData> = formStream
 
     override suspend fun upsert(task: FormData) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun upsertAll(tasks: List<FormData>) {
+    override suspend fun insertAll(forms: List<FormData>) {
         TODO("Not yet implemented")
     }
 

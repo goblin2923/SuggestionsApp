@@ -8,6 +8,10 @@ class SuggestionsApp : Application() {
         lateinit var suggestionsDatabase:SuggestionsDatabase
     }
 
+//    init {
+//        suggestionsDatabase = SuggestionsDatabase.getDatabase(applicationContext)
+//    }
+
     override fun onCreate() {
         super.onCreate()
         suggestionsDatabase = SuggestionsDatabase.getDatabase(applicationContext)

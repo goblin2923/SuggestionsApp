@@ -1,7 +1,7 @@
 package com.example.suggestionsapp_v2.data.source.local
 
 import com.example.suggestionsapp_v2.data.source.FormData
-import com.example.suggestionsapp_v2.data.source.network.NetworkForm
+import com.example.suggestionsapp_v2.data.source.network.NetworkDataclass
 
 //@Entity(tableName = "FormData")
 //data class LocalFormData (
@@ -11,36 +11,29 @@ import com.example.suggestionsapp_v2.data.source.network.NetworkForm
 //    val color: Int
 //)
 
-fun FormData.toExternal() = FormData(
-    fId = fId,
-    optionName = optionName,
-    votes = votes,
-    color = color
-)
-fun List<FormData>.toExternal() = map(FormData::toExternal) // Equivalent to map { it.toExternal() }
+//fun FormData.toNetwork() = NetworkDataclass(
+//    fId = fId,
+//    selectedOptions = optionName,
+//    votes = votes,
+//    color = color
+//)
+//fun List<FormData>.toNetwork() = map(FormData::toNetwork) // Equivalent to map { it.toExternal() }
 
-fun FormData.toLocal() = FormData(
-    fId =  fId,
-    optionName = optionName,
-    votes = votes,
-    color = color
+fun NetworkDataclass.toLocal() = FormData(
+//    fId =  fId,
+    optionName = selectedOptions,
+//    votes = votes,
+//    color = color
 )
-//fun List<Form>.toLocal() = map(Form::toLocal)
-//
-
-fun NetworkForm.toLocal() = FormData(
-    fId =  fId,
-    optionName = optionName,
-    votes = votes,
-    color = color
-)
-//fun List<NetworkForm>.toLocal() = map(NetworkForm::toLocal)
 
 
-fun FormData.toNetwork() = NetworkForm(
-    fId = fId,
-    optionName = optionName,
-    votes = votes,
-    color = color
-)
-fun List<FormData>.toNetwork() = map(FormData::toNetwork)
+fun List<NetworkDataclass>.toLocal() = map(NetworkDataclass::toLocal)
+
+
+//fun FormData.toNetwork() = NetworkDataclass(
+//    fId = fId,
+//    optionName = optionName,
+//    votes = votes,
+//    color = color
+//)
+//fun List<FormData>.toNetwork() = map(FormData::toNetwork)

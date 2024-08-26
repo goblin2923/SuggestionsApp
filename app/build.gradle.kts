@@ -1,9 +1,14 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+
 //    id("com.google.devtools.ksp") version "2.0.10-1.0.24"
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+//    id("org.jetbrains.kotlin.plugin.serialization")
+
+//    kotlin("jvm") version "2.0.0" // or kotlin("multiplatform") or any other kotlin plugin
+    id("kotlinx-serialization")
 }
 
 android {
@@ -53,13 +58,15 @@ android {
 }
 
 dependencies {
-// Retrofit
-    implementation(libs.retrofit)
-//    Serialization
-    implementation(libs.kotlinx.serialization.json)
-// Retrofit with Kotlin serialization Converter
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
-    implementation(libs.okhttp)
+//    ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.ktor.client.android)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+//    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.logback.classic)
 
 //    room
     implementation(libs.androidx.room.runtime)
@@ -67,10 +74,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.ui.text.google.fonts)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
-//  @inject
-    implementation (libs.javax.inject)
 
 //    Test Dispatcher
     implementation (libs.kotlinx.coroutines.test)
@@ -87,6 +93,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

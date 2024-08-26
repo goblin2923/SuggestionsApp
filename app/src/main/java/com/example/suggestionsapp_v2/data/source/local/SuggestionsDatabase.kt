@@ -15,17 +15,14 @@ abstract class SuggestionsDatabase : RoomDatabase() {
     abstract val formDao: FormDao
 
     companion object {
-
         @Volatile
         var INSTANCE: SuggestionsDatabase? = null
 
         fun getDatabase(context: Context): SuggestionsDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    context.applicationContext, SuggestionsDatabase::class.java, "app_database"
-                )
-//                    .addMigrations(MIGRATION_1_2)
-                    .build()
+                    context, SuggestionsDatabase::class.java, "app_database"
+                ).build()
                 INSTANCE = instance
                 instance
             }
@@ -35,27 +32,27 @@ abstract class SuggestionsDatabase : RoomDatabase() {
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        // Create the new table with the modified schema
-        db.execSQL("""
+        db.execSQL(
+            """
             CREATE TABLE IF NOT EXISTS `FormData_new` (
                 `fId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 `optionName` TEXT NOT NULL,
                 `votes` INTEGER NOT NULL,
                 `color` INTEGER NOT NULL
             )
-        """)
+        """
+        )
 
-        // Copy the data from the old table to the new table, converting fId to an integer if necessary
-        db.execSQL("""
+        db.execSQL(
+            """
             INSERT INTO `FormData_new` (optionName, votes, color)
             SELECT optionName, votes, color
             FROM FormData
-        """)
+        """
+        )
 
-        // Drop the old table
         db.execSQL("DROP TABLE FormData")
 
-        // Rename the new table to the old table's name
         db.execSQL("ALTER TABLE FormData_new RENAME TO FormData")
     }
 }

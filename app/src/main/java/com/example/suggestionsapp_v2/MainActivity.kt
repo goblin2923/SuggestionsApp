@@ -16,9 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import com.example.suggestionsapp_v2.data.source.local.SuggestionsDatabase
 import com.example.suggestionsapp_v2.ui.MainScreen
-import com.example.suggestionsapp_v2.ui.MainScreenViewModel
-import com.example.suggestionsapp_v2.ui.theme.SuggestionsApp_V2Theme
-import kotlinx.coroutines.launch
+import com.example.suggestionsapp_v2.ui.theme.SuggestionsAppTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -28,14 +26,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SuggestionsApp_V2Theme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Greeting(
-//                        name = "Android",
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
-
+            SuggestionsAppTheme {
                 MainScreen()
             }
         }
@@ -54,7 +45,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    SuggestionsApp_V2Theme {
         Greeting("Android")
-    }
+
 }
