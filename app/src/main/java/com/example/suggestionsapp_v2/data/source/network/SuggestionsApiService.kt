@@ -31,7 +31,7 @@ fun interface SuggestionsApiService {
 }
 
 class FormApiService(
-    private val client: HttpClient = HttpClient(CIO) {
+    private val client: HttpClient = HttpClient(Android) {
         install(ContentNegotiation) { json() }
     }
 ) : SuggestionsApiService {

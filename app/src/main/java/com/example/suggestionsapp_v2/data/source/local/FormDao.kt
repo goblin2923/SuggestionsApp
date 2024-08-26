@@ -19,7 +19,7 @@ interface FormDao {
 //    @Upsert
 //    suspend fun upsertAll(tasks: List<FormData>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(forms: List<FormData>)
 
     @Query("DELETE FROM FormData")

@@ -21,7 +21,7 @@ class DefaultFormRepository(
             val networkForms = networkDataSource.getResponses()
 
             if (networkForms.data.isNotEmpty()) {
-                localDataSource?.insertAll(networkForms.data.map { formData ->
+                localDataSource.insertAll(networkForms.data.map { formData ->
                     FormData(
                         optionName = formData.selectedOptions,
                         color = getRandomColor().toArgb(),
@@ -105,8 +105,3 @@ class DefaultFormRepository(
 }
 
 
-suspend fun main(){
-    val def = DefaultFormRepository()
-
-    def.refreshForms()
-}

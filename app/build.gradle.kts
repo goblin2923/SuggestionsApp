@@ -52,7 +52,7 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += setOf("/META-INF/{AL2.0,LGPL2.1}", "/META-INF/INDEX.LIST")
         }
     }
 }
@@ -66,7 +66,7 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
 //    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.logback.classic)
+//    implementation(libs.logback.classic)
 
 //    room
     implementation(libs.androidx.room.runtime)
