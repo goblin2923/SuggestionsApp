@@ -23,19 +23,44 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+
+data class MainScreenUiState(
+    val isLoading: Boolean = false,
+    val forms: List<FormData> = emptyList()
+)
+
 class MainScreenViewModel(
     val formRepo: DefaultFormRepository = DefaultFormRepository()
 ) : ViewModel() {
 
+    private val _uiState = MutableStateFlow(MainScreenUiState())
+    val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
 
     private val _formDataState = formRepo.getAllForms()
     val formState =
         _formDataState.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     init {
+        refreshForms()
+    }
 
+    fun getVotes() = formRepo.getVotes()
+
+    fun refreshForms() {
         viewModelScope.launch {
-            formRepo.refreshForms()
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            try {
+                formRepo.refreshForms()
+                formRepo.getAllForms().collect { formList ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        forms = formList
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            }
         }
     }
 
@@ -48,7 +73,5 @@ class MainScreenViewModel(
             }
         }
     }
-
-    fun getVotes() = formRepo.getVotes()
 }
 
