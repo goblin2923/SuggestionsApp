@@ -8,18 +8,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.compose.SuggestionsAppTheme
 import com.example.suggestionsapp_v2.ui.MainScreen
-import com.example.suggestionsapp_v2.ui.theme.SuggestionsAppTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SuggestionsAppTheme {
+            SuggestionsAppTheme(dynamicColor = false) {
                 MainScreen()
             }
         }

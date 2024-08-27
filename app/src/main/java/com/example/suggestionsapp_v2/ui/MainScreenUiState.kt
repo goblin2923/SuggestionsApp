@@ -4,7 +4,5 @@ import androidx.compose.ui.graphics.Color
 import androidx.fragment.app.Fragment
 
 data class MainScreenUiState(
-    val optionName: String,
-    val votes: Int = 0,
-    var color: Color
+    val uhhhhh: Any
 )

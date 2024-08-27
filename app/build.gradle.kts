@@ -17,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.suggestionsapp_v2"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -65,8 +65,9 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
-//    implementation(libs.kotlinx.serialization.json)
-//    implementation(libs.logback.classic)
+
+//    splash screen
+    implementation(libs.androidx.core.splashscreen)
 
 //    room
     implementation(libs.androidx.room.runtime)
@@ -75,6 +76,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.compose.material)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 

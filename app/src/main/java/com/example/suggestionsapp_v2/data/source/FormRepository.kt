@@ -10,11 +10,18 @@ import com.example.suggestionsapp_v2.data.source.network.FormApiService
 import com.example.suggestionsapp_v2.data.source.network.NetworkDataclass
 //import com.example.suggestionsapp_v2.data.source.network.SuggestionsAPI
 import com.example.suggestionsapp_v2.data.source.network.SuggestionsApiService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import java.text.Normalizer.Form
+import kotlin.properties.Delegates
 
 class DefaultFormRepository(
     private val localDataSource: FormDao = SuggestionsApp.suggestionsDatabase.formDao,
     private val networkDataSource: SuggestionsApiService = FormApiService()
 ) {
+    companion object {
+        private var totalVotes = 0
+    }
 
     suspend fun refreshForms() {
         try {
@@ -54,7 +61,7 @@ class DefaultFormRepository(
                         }
                     }
                 }
-
+                totalVotes = calcTotalVotes(formsList)
                 localDataSource.insertAll(formsList)
             }
 
@@ -62,22 +69,17 @@ class DefaultFormRepository(
             e.printStackTrace()
         }
     }
-
-
-//        println(localDataSource?.observeAll()?.first())
+    fun getVotes() = totalVotes
 
     fun getAllForms() = localDataSource.observeAll()
-
 
     private fun getRandomColor(): Color {
         return ColorSet.random()
     }
 
-    private suspend fun getVotes(option: FormData.Options): Int{
-        return localDataSource.getVotes(option)
+    private fun calcTotalVotes(data: List<FormData>): Int {
+        return data.sumOf { it.votes }
     }
-
-
 //    suspend fun create(fID: Int, option: String, votes: Int, color: Int): Int {
 //        val formData = FormData(
 //            fId = fID,

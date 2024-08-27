@@ -1,6 +1,8 @@
 package com.example.suggestionsapp_v2
 
 import android.app.Application
+import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.suggestionsapp_v2.data.source.DefaultFormRepository
 import com.example.suggestionsapp_v2.data.source.local.SuggestionsDatabase
 import com.example.suggestionsapp_v2.ui.MainScreenViewModel
@@ -19,3 +21,5 @@ class SuggestionsApp : Application() {
         defaultRepo = DefaultFormRepository()
     }
 }
+@Composable
+fun GetMainScreenViewModel(): MainScreenViewModel = viewModel(factory = MainScreenViewModel.Factory)

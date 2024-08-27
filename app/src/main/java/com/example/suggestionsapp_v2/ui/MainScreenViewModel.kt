@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,31 +27,17 @@ class MainScreenViewModel(
     val formRepo: DefaultFormRepository = DefaultFormRepository()
 ) : ViewModel() {
 
+
     private val _formDataState = formRepo.getAllForms()
     val formState =
         _formDataState.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     init {
+
         viewModelScope.launch {
             formRepo.refreshForms()
         }
     }
-
-    private fun getRandomColor(): Color {
-        return ColorSet.random()
-    }
-
-    private fun addColor(formDataState: List<FormData>) {
-        val withColors = formDataState.map { form ->
-            MainScreenUiState(
-//                fId = form.fId,
-                optionName = form.optionName.toString(),
-                votes = form.votes,
-                color = getRandomColor()
-            )
-        }
-    }
-
 
     // Define ViewModel factory in a companion object
     companion object {
@@ -61,5 +48,7 @@ class MainScreenViewModel(
             }
         }
     }
+
+    fun getVotes() = formRepo.getVotes()
 }
 
