@@ -1,4 +1,4 @@
-package com.example.suggestionsapp_v2.ui.mainScreen
+package com.example.suggestionsapp_v2.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
-class MainScreenViewModel(
+class SuggestionsViewModel(
     val formRepo: DefaultFormRepository = DefaultFormRepository()
 ) : ViewModel() {
 
@@ -56,7 +56,7 @@ class MainScreenViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val defaultRepo = (this[APPLICATION_KEY] as SuggestionsApp).defaultRepo
-                MainScreenViewModel(formRepo = defaultRepo)
+                SuggestionsViewModel(formRepo = defaultRepo)
             }
         }
     }

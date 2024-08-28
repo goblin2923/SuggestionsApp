@@ -30,9 +30,8 @@ import com.example.suggestionsapp_v2.ui.HomePage
 import com.example.suggestionsapp_v2.ui.NavTabScreens
 import com.example.suggestionsapp_v2.ui.SuggestionsPage
 import com.example.suggestionsapp_v2.ui.components.SuggestionsNavTab
-import com.example.suggestionsapp_v2.ui.mainScreen.DisplayMainScreen
-import com.example.suggestionsapp_v2.ui.mainScreen.MainScreenViewModel
-import kotlinx.coroutines.MainScope
+import com.example.suggestionsapp_v2.ui.screens.DisplayMainScreen
+import com.example.suggestionsapp_v2.ui.screens.SuggestionsViewModel
 
 class SuggestionsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,15 +48,15 @@ class SuggestionsActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
-    mainScreenViewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.Factory),
+    suggestionsViewModel: SuggestionsViewModel = viewModel(factory = SuggestionsViewModel.Factory),
     modifier: Modifier = Modifier,
 ) {
     SuggestionsAppTheme(dynamicColor = false) {
 
-        val uiState by mainScreenViewModel.uiState.collectAsState()
+        val uiState by suggestionsViewModel.uiState.collectAsState()
         val pullRefreshState = rememberPullRefreshState(
             refreshing = uiState.isLoading,
-            onRefresh = { mainScreenViewModel.refreshForms() },
+            onRefresh = { suggestionsViewModel.refreshForms() },
             )
 
         var navController = rememberNavController()

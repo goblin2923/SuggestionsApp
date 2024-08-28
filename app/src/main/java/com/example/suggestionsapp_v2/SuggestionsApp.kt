@@ -5,14 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.suggestionsapp_v2.data.source.DefaultFormRepository
 import com.example.suggestionsapp_v2.data.source.local.SuggestionsDatabase
-import com.example.suggestionsapp_v2.ui.mainScreen.MainScreenViewModel
+import com.example.suggestionsapp_v2.ui.screens.SuggestionsViewModel
 
 class SuggestionsApp : Application() {
     companion object{
         lateinit var suggestionsDatabase:SuggestionsDatabase
     }
     lateinit var defaultRepo:DefaultFormRepository
-    lateinit var mainViewModel: MainScreenViewModel
+    lateinit var mainViewModel: SuggestionsViewModel
 
 
     override fun onCreate() {
@@ -22,4 +22,4 @@ class SuggestionsApp : Application() {
     }
 }
 @Composable
-fun GetMainScreenViewModel(): MainScreenViewModel = viewModel(factory = MainScreenViewModel.Factory)
+fun GetMainScreenViewModel(): SuggestionsViewModel = viewModel(factory = SuggestionsViewModel.Factory)

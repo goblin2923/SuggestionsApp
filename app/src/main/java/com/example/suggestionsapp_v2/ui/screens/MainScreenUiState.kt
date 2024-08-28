@@ -1,4 +1,4 @@
-package com.example.suggestionsapp_v2.ui.mainScreen
+package com.example.suggestionsapp_v2.ui.screens
 
 import com.example.suggestionsapp_v2.data.source.FormData
 
