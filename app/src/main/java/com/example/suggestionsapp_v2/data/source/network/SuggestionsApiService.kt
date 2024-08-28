@@ -70,7 +70,7 @@ suspend fun testktor() {
 
 
 private const val BASE_URL =
-    "https://script.google.com/macros/s/AKfycbw522lH3IaPoTh6F-FKz1fyLKsrRKDAjeeIEF9QJ5cl7Zr1iBtDUYhTZv3oWRP1Gpwa6Q/exec"
+    "https://script.google.com/macros/s/AKfycbyeg9OSsPmOP5llyZt6kuU5eQct-W57UOc6P3R7Ky4fVcXROu8-aP5Bh-7WqBjUxAmuCg/exec"
 
 class MissingPageException(response: HttpResponse, cachedResponseText: String) :
     ResponseException(response, cachedResponseText) {

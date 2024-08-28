@@ -1,5 +1,6 @@
-package com.example.suggestionsapp_v2.ui
+package com.example.suggestionsapp_v2.ui.mainScreen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,51 +38,11 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 
 const val TAG = "easytosearch"
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun MainScreen(
-    mainScreenViewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.Factory),
-    modifier: Modifier = Modifier,
-) {
-//    val formDataState by mainScreenViewModel.formState.collectAsState()
-    val uiState by mainScreenViewModel.uiState.collectAsState()
-
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.isLoading,
-        onRefresh = { mainScreenViewModel.refreshForms() },
-
-    )
-
-    Scaffold(topBar = {},
-        bottomBar = {},
-        floatingActionButton = {},
-        modifier = modifier,
-//        containerColor = MaterialTheme.colorScheme.surface,
-        containerColor = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.primaryContainer
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .pullRefresh(pullRefreshState)
-        ) {
-            DisplayMainScreen(uiState = uiState)
-
-            PullRefreshIndicator(
-                refreshing = uiState.isLoading,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-                backgroundColor = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-
-    }
-}
-
 @Composable
 fun DisplayMainScreen(
     modifier: Modifier = Modifier, uiState: MainScreenUiState
 ) {
+//    val mainScreenViewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.Factory),
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,12 +57,12 @@ fun DisplayMainScreen(
         }
         Column(
             modifier = modifier
-                .weight(.7f)
+                .weight(.6f)
                 .fillMaxWidth()
                 .padding(DEFAULT_PADDING),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            ) {
+        ) {
             DisplayCircle(
                 items = formDataState,
                 votes = { formData -> formData.votes },
@@ -111,7 +72,7 @@ fun DisplayMainScreen(
         }
         LazyColumn(
             modifier = modifier
-                .weight(0.3f)
+                .weight(0.4f)
                 .fillMaxWidth()
                 .padding(DEFAULT_PADDING)
                 .clip(RoundedCornerShape(7)),
@@ -121,13 +82,15 @@ fun DisplayMainScreen(
             items(formDataState) { message ->
                 BaseRow(
                     color = Color(message.color ?: Color.Red.toArgb()),
-                    title = message.optionName.toString().lowercase(),
+                    title = message.optionName.toString().lowercase().replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(java.util.Locale.ENGLISH) else it.toString()
+                        },
                     votes = message.votes,
                 )
 
             }
         }
-        Spacer(modifier = Modifier.padding(bottom = 40.dp))
+//        Spacer(modifier = Modifier.padding(bottom = 40.dp))
     }
 }
 
@@ -167,23 +130,6 @@ fun DisplayCircle(
     }
 }
 
-@Composable
-fun DisplayRow(
-    color: Color,
-    optionName: String = "",
-    votes: Int = 0,
-    modifier: Modifier = Modifier.fillMaxWidth()
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Start,
-
-        ) {
-        Text(text = votes.toString(), style = TextStyle(fontSize = 24.sp))
-        Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-        Text(text = optionName, style = TextStyle(fontSize = 24.sp))
-    }
-}
 
 
 fun <E> List<E>.extractProportions(selector: (E) -> Int): List<Float> {

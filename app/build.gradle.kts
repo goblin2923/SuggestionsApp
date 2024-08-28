@@ -69,6 +69,13 @@ dependencies {
 //    splash screen
     implementation(libs.androidx.core.splashscreen)
 
+//    firebase
+    implementation(platform(libs.firebase.bom))
+
+    // Add the dependency for the Realtime Database library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation(libs.firebase.database)
+
 //    room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.legacy.support.v4)
@@ -77,6 +84,7 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.navigation.compose)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 

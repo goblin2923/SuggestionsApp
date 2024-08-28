@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
@@ -51,30 +52,36 @@ fun BaseRow(
             color = color, modifier = Modifier
         )
         Spacer(Modifier.width(12.dp))
-        Text(text = title, style = typography.headlineLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
+        Text(
+            text = title,
+            style = typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
         Spacer(Modifier.weight(1f))
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = votes.toString(),
                 style = typography.headlineLarge,
-                modifier = Modifier.align(Alignment.CenterVertically),
+                modifier = Modifier.align(Alignment.CenterVertically)
+                    .padding(horizontal = 8.dp),
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
         Spacer(Modifier.width(16.dp))
 
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Icon(
-                imageVector = Icons.Filled.FavoriteBorder,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 12.dp)
-                    .size(24.dp),
-                tint = MaterialTheme.colorScheme.surface
-            )
-        }
+//        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+//            Icon(
+//                imageVector = Icons.Filled.FavoriteBorder,
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .padding(end = 12.dp)
+//                    .size(24.dp),
+//                tint = MaterialTheme.colorScheme.surface
+//            )
+//        }
     }
     FormOptionDivider()
 }
@@ -82,7 +89,7 @@ fun BaseRow(
 @Composable
 fun FormOptionDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
-        modifier = modifier, thickness = 1.dp, color = MaterialTheme.colorScheme.background
+        modifier = modifier, thickness = 2.dp, color = MaterialTheme.colorScheme.background
     )
 }
 
@@ -93,9 +100,16 @@ fun FormOptionDivider(modifier: Modifier = Modifier) {
 private fun ColorIndicator(color: Color, modifier: Modifier = Modifier) {
     Spacer(
         modifier
-            .size(4.dp, 36.dp)
+            .size(8.dp, 36.dp)
             .background(color = color)
     )
+//    Spacer(
+//        modifier
+////            .padding(start = 4.dp)
+//            .size(1.dp, 36.dp)
+//            .background(color = Color.White)
+//            .alpha(0.1f)
+//    )
 }
 
 

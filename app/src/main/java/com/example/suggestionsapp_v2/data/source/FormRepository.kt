@@ -5,15 +5,9 @@ import androidx.compose.ui.graphics.toArgb
 import com.example.suggestionsapp_v2.SuggestionsApp
 import com.example.suggestionsapp_v2.data.source.local.ColorSet
 import com.example.suggestionsapp_v2.data.source.local.FormDao
-import com.example.suggestionsapp_v2.data.source.local.SuggestionsDatabase
 import com.example.suggestionsapp_v2.data.source.network.FormApiService
-import com.example.suggestionsapp_v2.data.source.network.NetworkDataclass
 //import com.example.suggestionsapp_v2.data.source.network.SuggestionsAPI
 import com.example.suggestionsapp_v2.data.source.network.SuggestionsApiService
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import java.text.Normalizer.Form
-import kotlin.properties.Delegates
 
 class DefaultFormRepository(
     private val localDataSource: FormDao = SuggestionsApp.suggestionsDatabase.formDao,
@@ -29,10 +23,10 @@ class DefaultFormRepository(
 
             if (networkForms.data.isNotEmpty()) {
                 val formsList = mutableListOf<FormData>()
+                var colorList = ColorSet.toMutableList()
 
                 networkForms.data.forEach { formData ->
                     val options = formData.selectedOptions.split(',').map { it.trim() }
-
                     options.forEach { optionStr ->
                         val option = when (optionStr) {
                             "Painting" -> FormData.Options.PAINTING
@@ -50,11 +44,20 @@ class DefaultFormRepository(
                                 val updatedForm = existingForm.copy(votes = existingForm.votes + 1)
                                 formsList[formsList.indexOf(existingForm)] = updatedForm
                             } else {
+                                var color: Int = 0
+                                if (colorList.isNotEmpty()) {
+                                    color = colorList.first().toArgb()
+                                    colorList = colorList.drop(1).toMutableList()
+                                } else {
+                                    color = getRandomColor().toArgb()
+                                }
                                 formsList.add(
                                     FormData(
-                                        optionName = option,
-                                        votes = 1,
-                                        color = getRandomColor().toArgb()
+                                        optionName = option, votes = 1,
+                                        color = color,
+                                        name = formData.name,
+                                        time = formData.timeStamp,
+                                        suggestion =  if (formData.suggestions == "") "No suggestions" else formData.suggestions
                                     )
                                 )
                             }
@@ -69,6 +72,7 @@ class DefaultFormRepository(
             e.printStackTrace()
         }
     }
+
     fun getVotes() = totalVotes
 
     fun getAllForms() = localDataSource.observeAll()

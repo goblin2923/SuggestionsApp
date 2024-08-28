@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.suggestionsapp_v2.data.source.DefaultFormRepository
 import com.example.suggestionsapp_v2.data.source.local.SuggestionsDatabase
-import com.example.suggestionsapp_v2.ui.MainScreenViewModel
+import com.example.suggestionsapp_v2.ui.mainScreen.MainScreenViewModel
 
 class SuggestionsApp : Application() {
     companion object{

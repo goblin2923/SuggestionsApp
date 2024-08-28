@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NetworkDataclass(
+    val timeStamp: String,
     val selectedOptions: String,
     val suggestions: String? = null,
-    val timeStamp: String? = null,
+    val name: String,
 )
-
 
 @Serializable
 data class NetworkResponseForms(

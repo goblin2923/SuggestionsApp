@@ -10,7 +10,10 @@ data class FormData(
 //    @PrimaryKey (autoGenerate = true) val fId: Int = 0,
     @PrimaryKey val optionName: Options,
     @ColumnInfo(name = "votes") val votes: Int = 0,
-    @ColumnInfo(name = "color") val color: Int? = 0
+    @ColumnInfo(name = "color") val color: Int? = 0,
+    @ColumnInfo(name = "name") val name: String = "",
+    @ColumnInfo(name = "suggestion") val suggestion: String? = "",
+    @ColumnInfo(name = "time") val time: String = ""
 ){
     enum class Options{
         PAINTING,
@@ -22,8 +25,3 @@ data class FormData(
     }
 
 }
-//
-//fun FormData.calculateVotes():Int{
-//
-//}
-//
