@@ -54,8 +54,7 @@ fun SuggestionsNavTab(
         color = MaterialTheme.colorScheme.primaryContainer,
     ) {
         Row(
-            Modifier.selectableGroup(),
-            horizontalArrangement = Arrangement.Center
+            Modifier.selectableGroup(), horizontalArrangement = Arrangement.Center
         ) {
             pages.forEach { screen ->
                 NavTab(
@@ -72,10 +71,7 @@ fun SuggestionsNavTab(
 
 @Composable
 private fun NavTab(
-    text: String,
-    icon: ImageVector,
-    onSelected: () -> Unit,
-    selected: Boolean
+    text: String, icon: ImageVector, onSelected: () -> Unit, selected: Boolean
 ) {
     val color = MaterialTheme.colorScheme.onSurface
     val durationMillis = if (selected) TabFadeInAnimationDuration else TabFadeOutAnimationDuration
@@ -101,9 +97,7 @@ private fun NavTab(
                 role = Role.Tab,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(
-                    bounded = false,
-                    radius = Dp.Unspecified,
-                    color = Color.Unspecified
+                    bounded = false, radius = Dp.Unspecified, color = Color.Unspecified
                 )
             )
             .clearAndSetSemantics { contentDescription = text },
@@ -113,12 +107,13 @@ private fun NavTab(
         Icon(imageVector = icon, contentDescription = text, tint = tabTintColor)
         if (selected) {
             Spacer(Modifier.padding(horizontal = 8.dp))
-            Text(text,
+            Text(
+                text,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
 
-                    )
+                )
 
         }
     }

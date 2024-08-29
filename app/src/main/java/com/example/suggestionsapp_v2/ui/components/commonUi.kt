@@ -2,12 +2,15 @@ package com.example.suggestionsapp_v2.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.HorizontalDivider
@@ -44,8 +47,10 @@ fun BaseRow(
             .clearAndSetSemantics {
                 contentDescription = "Votes for $title: $votes"
             }
-            .background(color = MaterialTheme.colorScheme.onPrimary),
+            .background(color = MaterialTheme.colorScheme.onPrimary)
+        ,
         verticalAlignment = Alignment.CenterVertically,
+
     ) {
         val typography = MaterialTheme.typography
         ColorIndicator(
@@ -65,7 +70,8 @@ fun BaseRow(
             Text(
                 text = votes.toString(),
                 style = typography.headlineLarge,
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
                     .padding(horizontal = 8.dp),
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -83,6 +89,71 @@ fun BaseRow(
 //            )
 //        }
     }
+    FormOptionDivider()
+}
+
+@Composable
+fun BaseRow(
+    modifier: Modifier = Modifier,
+    color: Color,
+    name: String,
+    suggestions: String,
+    time: String,
+) {
+    Column(modifier = Modifier
+        .height(88.dp)
+        .clearAndSetSemantics {
+            contentDescription = "Votes by $name"
+        }
+        .background(color = MaterialTheme.colorScheme.onPrimary),
+        verticalArrangement = Arrangement.Top) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val typography = MaterialTheme.typography.bodyMedium
+            val textColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ColorIndicator(
+                color = color, modifier = Modifier
+            )
+            Spacer(Modifier.width(12.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = name,
+                    style = typography,
+                    color = textColor,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+
+                Text(
+                    text = time,
+                    style = typography,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = textColor
+                )
+            }
+        }
+
+        Text(
+            text = "Suggestions:",
+            modifier = Modifier.padding(start = 24.dp),
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp)
+        ) {
+            item {
+                Text(text = suggestions, textAlign = androidx.compose.ui.text.style.TextAlign.Justify)
+            }
+
+        }
+    }
+
     FormOptionDivider()
 }
 
@@ -117,5 +188,10 @@ private fun ColorIndicator(color: Color, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
 
-    BaseRow(color = Color.Red, title = "Mime", votes = 10)
+    BaseRow(
+        color = Color.Red,
+        name = "hammad",
+        time = "12:00",
+        suggestions = "adjksja nsakjlsansakjkf aslfjslaf akfjksa ksjaf ksajf sakfnkjfa saknj asjkfksfa "
+    )
 }

@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -20,18 +21,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.SuggestionsAppTheme
+import com.example.suggestionsapp_v2.data.source.FormData
+import com.example.suggestionsapp_v2.ui.FormOptionPage
 import com.example.suggestionsapp_v2.ui.HomePage
 import com.example.suggestionsapp_v2.ui.NavTabScreens
 import com.example.suggestionsapp_v2.ui.SuggestionsPage
 import com.example.suggestionsapp_v2.ui.components.SuggestionsNavTab
 import com.example.suggestionsapp_v2.ui.screens.DisplayMainScreen
+import com.example.suggestionsapp_v2.ui.screens.FormOptionScreen
+import com.example.suggestionsapp_v2.ui.screens.MainScreenUiState
 import com.example.suggestionsapp_v2.ui.screens.SuggestionsViewModel
+import com.example.suggestionsapp_v2.ui.screens.TAG
 
 class SuggestionsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +76,9 @@ fun MainScreen(
         Scaffold(
             topBar = {},
             bottomBar = {
-                SuggestionsNavTab(pages = NavTabScreens, onTabSelected = { newScreen ->
+                SuggestionsNavTab(
+                    pages = NavTabScreens,
+                    onTabSelected = { newScreen ->
                     navController.navigateSingleTopTo(newScreen.route)
                 }, currentPage = currentScreen)
             },
@@ -89,7 +98,13 @@ fun MainScreen(
                             .padding(innerPadding)
                             .pullRefresh(pullRefreshState)
                     ) {
-                        DisplayMainScreen(uiState = uiState)
+                        DisplayMainScreen(
+                            uiState = uiState,
+                            onAccountClick = {
+                                optionName ->
+                                navController.navigateSingleTopTo("${FormOptionPage.route}/$optionName")
+                            }
+                        )
 
                         PullRefreshIndicator(
                             refreshing = uiState.isLoading,
@@ -101,12 +116,49 @@ fun MainScreen(
                 }
                 composable(route = SuggestionsPage.route) {
                     Log.w("search", "second screen recomposing: ", )
-                    Text(text = "Suggestions")
+                    DisplayFormNames(uiState = uiState)
+                }
+                composable(
+                    route = FormOptionPage.routeWithArgs,
+                    arguments = FormOptionPage.arguments
+                ) { navBackStackEntry ->
+                    val optionName = navBackStackEntry.arguments?.getString(FormOptionPage.optionArg)
+                    if (optionName != null) {
+                        val option = FormData.Options.valueOf(optionName)
+                        FormOptionScreen(option)
+                    }
                 }
             }
         }
     }
 }
 
+@Composable
+fun DisplayFormNames(uiState: MainScreenUiState) {
+    Column {
+        uiState.forms.forEach { formData ->
+            Text(
+                text = "Option: ${formData.optionName}, " +
+                        "Name: ${formData.name}, " +
+                        "Time: ${formData.time}, " +
+                        "Suggestion: ${formData.suggestion ?: "No suggestion"}"
+            )
+        }
+    }
+}
+
+
 fun NavHostController.navigateSingleTopTo(route: String) =
-    this.navigate(route) { launchSingleTop = true }
+    this.navigate(route) {
+        // Pop up to the start destination of the graph to
+        // avoid building up a large stack of destinations
+        // on the back stack as users select items
+        popUpTo(this@navigateSingleTopTo.graph.findStartDestination().id) {
+            saveState = true
+        }
+        // Avoid multiple copies of the same destination when
+        // reselecting the same item
+        launchSingleTop = true
+        // Restore state when reselecting a previously selected item
+        restoreState = true
+    }

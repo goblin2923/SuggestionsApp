@@ -1,5 +1,6 @@
 package com.example.suggestionsapp_v2.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.suggestionsapp_v2.data.source.FormData
 import com.example.suggestionsapp_v2.ui.components.AnimatedCircle
 import com.example.suggestionsapp_v2.ui.components.BaseRow
@@ -28,7 +30,9 @@ const val TAG = "easytosearch"
 
 @Composable
 fun DisplayMainScreen(
-    modifier: Modifier = Modifier, uiState: MainScreenUiState
+    modifier: Modifier = Modifier,
+    uiState: MainScreenUiState,
+    onAccountClick: (String) -> Unit
 ) {
 //    val mainScreenViewModel: SuggestionsViewModel = viewModel(factory = SuggestionsViewModel.Factory),
     Column(
@@ -74,6 +78,7 @@ fun DisplayMainScreen(
                             if (it.isLowerCase()) it.titlecase(java.util.Locale.ENGLISH) else it.toString()
                         },
                     votes = message.votes,
+                    modifier = Modifier.clickable { onAccountClick(message.optionName.toString()) },
                 )
 
             }
