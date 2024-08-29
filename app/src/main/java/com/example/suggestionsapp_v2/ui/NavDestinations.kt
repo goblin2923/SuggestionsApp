@@ -30,6 +30,7 @@ object FormOptionPage : NavDestinations {
     override val icon: ImageVector = Icons.Filled.Menu
 }
 
+val NavTabScreens = listOf(HomePage,SuggestionsPage)
 
 
 //object AssistantPage: NavDestinations{
@@ -37,6 +38,5 @@ object FormOptionPage : NavDestinations {
 //    override val icon = R.drawable.
 //}
 
-val NavTabScreens = listOf(HomePage,SuggestionsPage)
 
 

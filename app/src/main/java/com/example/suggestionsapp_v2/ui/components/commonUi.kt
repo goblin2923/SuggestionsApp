@@ -101,7 +101,7 @@ fun BaseRow(
     time: String,
 ) {
     Column(modifier = Modifier
-        .height(88.dp)
+        .height(96.dp)
         .clearAndSetSemantics {
             contentDescription = "Votes by $name"
         }
@@ -111,12 +111,12 @@ fun BaseRow(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val typography = MaterialTheme.typography.bodyMedium
+            val typography = MaterialTheme.typography.bodyLarge
             val textColor = MaterialTheme.colorScheme.onPrimaryContainer
             ColorIndicator(
                 color = color, modifier = Modifier
             )
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(4.dp))
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
@@ -140,7 +140,7 @@ fun BaseRow(
         Text(
             text = "Suggestions:",
             modifier = Modifier.padding(start = 24.dp),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.primary
         )
         LazyColumn(
             modifier = Modifier
@@ -148,7 +148,10 @@ fun BaseRow(
                 .padding(horizontal = 32.dp)
         ) {
             item {
-                Text(text = suggestions, textAlign = androidx.compose.ui.text.style.TextAlign.Justify)
+                Text(
+                    text = suggestions,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Justify,
+                    color = MaterialTheme.colorScheme.primary)
             }
 
         }
@@ -158,9 +161,9 @@ fun BaseRow(
 }
 
 @Composable
-fun FormOptionDivider(modifier: Modifier = Modifier) {
+fun FormOptionDivider(modifier: Modifier = Modifier, color: Color = MaterialTheme.colorScheme.background) {
     HorizontalDivider(
-        modifier = modifier, thickness = 2.dp, color = MaterialTheme.colorScheme.background
+        modifier = modifier, thickness = 2.dp, color = color
     )
 }
 

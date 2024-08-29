@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FormDao {
+
     @Transaction
     @Query("SELECT * FROM FormData WHERE optionName = :optionName")
     suspend fun getFormWithUsers(optionName: FormData.Options): FormWithUsers?
@@ -33,6 +34,10 @@ interface FormDao {
     @Transaction
     @Query("SELECT * FROM FormData")
     fun observeAll(): Flow<List<FormWithUsers>>
+
+    @Transaction
+    @Query("SELECT * FROM FormData")
+    suspend fun getAllFormsWithUsers(): List<FormWithUsers>
 }
 
 //@Dao

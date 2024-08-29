@@ -1,9 +1,9 @@
 package com.example.suggestionsapp_v2.ui.components
 
-import android.graphics.drawable.Drawable
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.Animatable
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -20,26 +20,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.suggestionsapp_v2.R
 import com.example.suggestionsapp_v2.ui.NavDestinations
-
+import kotlinx.coroutines.launch
 
 @Composable
 fun SuggestionsNavTab(
@@ -47,6 +41,30 @@ fun SuggestionsNavTab(
     onTabSelected: (NavDestinations) -> Unit,
     currentPage: NavDestinations
 ) {
+    val color = MaterialTheme.colorScheme.onSurface
+    val tabTintColors = remember {
+        pages.map { Animatable(if (it == currentPage) color else color.copy(alpha = InactiveTabOpacity)) }
+    } // Now holds Animatable objects
+
+    val animSpec = remember {
+        tween<Color>(
+            durationMillis = TabFadeInAnimationDuration, // Use a consistent duration
+            easing = LinearEasing,
+            delayMillis = TabFadeInAnimationDelay)
+    }
+
+    LaunchedEffect(currentPage) {
+        tabTintColors.forEachIndexed { index, animatable ->
+            val targetValue = if (pages[index] == currentPage) color else color.copy(alpha = InactiveTabOpacity)
+            launch {
+                animatable.animateTo(
+                    targetValue = targetValue,
+                    animationSpec = animSpec
+                )
+            }
+        }
+    }
+
     Surface(
         Modifier
             .height(TabHeight)
@@ -56,36 +74,41 @@ fun SuggestionsNavTab(
         Row(
             Modifier.selectableGroup(), horizontalArrangement = Arrangement.Center
         ) {
-            pages.forEach { screen ->
+            pages.forEachIndexed { index, screen ->
                 NavTab(
                     text = screen.route,
                     icon = screen.icon,
                     onSelected = { onTabSelected(screen) },
-                    selected = currentPage == screen
+                    selected = currentPage == screen,
+                    tabTintColor = tabTintColors[index].value
                 )
             }
+
         }
     }
-
 }
 
 @Composable
 private fun NavTab(
-    text: String, icon: ImageVector, onSelected: () -> Unit, selected: Boolean
+    text: String,
+    icon: ImageVector,
+    onSelected: () -> Unit,
+    selected: Boolean,
+    tabTintColor: Color
 ) {
-    val color = MaterialTheme.colorScheme.onSurface
-    val durationMillis = if (selected) TabFadeInAnimationDuration else TabFadeOutAnimationDuration
-    val animSpec = remember {
-        tween<Color>(
-            durationMillis = durationMillis,
-            easing = LinearEasing,
-            delayMillis = TabFadeInAnimationDelay
-        )
-    }
-    val tabTintColor by animateColorAsState(
-        targetValue = if (selected) color else color.copy(alpha = InactiveTabOpacity),
-        animationSpec = animSpec
-    )
+
+//    val color = androidx.compose.material.MaterialTheme.colors.onSurface
+//    val animSpec = remember {
+//        tween<Color>(
+//            durationMillis = durationMillis,
+//            easing = LinearEasing,
+//            delayMillis = TabFadeInAnimationDelay
+//        )
+//    }
+//    val tabTintColor by animateColorAsState(
+//        targetValue = if (selected) color else color.copy(alpha = InactiveTabOpacity),
+//        animationSpec = animSpec
+//    )
     Row(
         modifier = Modifier
             .padding(16.dp)
@@ -97,12 +120,12 @@ private fun NavTab(
                 role = Role.Tab,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(
-                    bounded = false, radius = Dp.Unspecified, color = Color.Unspecified
+                    bounded = false,
+                    radius = Dp.Unspecified,
+                    color = Color.Unspecified
                 )
             )
-            .clearAndSetSemantics { contentDescription = text },
-//        horizontalArrangement = Arrangement.Center,
-//        verticalAlignment = Alignment.CenterVertically
+            .clearAndSetSemantics { contentDescription = text }
     ) {
         Icon(imageVector = icon, contentDescription = text, tint = tabTintColor)
         if (selected) {

@@ -1,4 +1,4 @@
-package com.example.suggestionsapp_v2.ui.screens
+package com.example.suggestionsapp_v2.ui.screens.mainScreen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,17 +26,17 @@ import com.example.suggestionsapp_v2.data.source.FormData
 import com.example.suggestionsapp_v2.data.source.FormWithUsers
 import com.example.suggestionsapp_v2.ui.components.AnimatedCircle
 import com.example.suggestionsapp_v2.ui.components.BaseRow
-import io.ktor.client.request.forms.formData
+import com.example.suggestionsapp_v2.ui.screens.viewModels.SuggestionsViewModel
 
 const val TAG = "easytosearch"
 
 @Composable
 fun DisplayMainScreen(
     modifier: Modifier = Modifier,
-    uiState: MainScreenUiState,
+    formDataState: List<FormWithUsers>,
     onAccountClick: (String) -> Unit
 ) {
-//    val mainScreenViewModel: SuggestionsViewModel = viewModel(factory = SuggestionsViewModel.Factory),
+    val mainScreenViewModel: SuggestionsViewModel = viewModel(factory = SuggestionsViewModel.Factory)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,7 +46,7 @@ fun DisplayMainScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 //        val formDataState = mainScreenViewModel.formState.value.sortedByDescending { formData -> formData.formData.votes }
-        val formDataState = uiState.forms.sortedByDescending { formData -> formData.formData.votes }
+//        val formDataState = uiState.forms.sortedByDescending { formData -> formData.formData.votes }
         val colorList: List<Color> = formDataState.map { formData ->
             Color(formData.formData.color ?: 0)
         }

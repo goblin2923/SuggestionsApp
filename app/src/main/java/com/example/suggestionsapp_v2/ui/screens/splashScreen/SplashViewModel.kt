@@ -1,4 +1,4 @@
-package com.example.suggestionsapp_v2.ui.splashScreen
+package com.example.suggestionsapp_v2.ui.screens.splashScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

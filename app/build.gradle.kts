@@ -3,12 +3,10 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
 
-//    id("com.google.devtools.ksp") version "2.0.10-1.0.24"
     id("com.google.devtools.ksp")
-//    id("org.jetbrains.kotlin.plugin.serialization")
 
-//    kotlin("jvm") version "2.0.0" // or kotlin("multiplatform") or any other kotlin plugin
     id("kotlinx-serialization")
+    id("com.google.gms.google-services")
 }
 
 android {

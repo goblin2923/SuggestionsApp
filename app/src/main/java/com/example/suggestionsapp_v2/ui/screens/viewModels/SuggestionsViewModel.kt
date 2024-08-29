@@ -1,4 +1,4 @@
-package com.example.suggestionsapp_v2.ui.screens
+package com.example.suggestionsapp_v2.ui.screens.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.suggestionsapp_v2.SuggestionsApp
 import com.example.suggestionsapp_v2.data.source.DefaultFormRepository
+import com.example.suggestionsapp_v2.ui.screens.mainScreen.MainScreenUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -38,13 +39,15 @@ class SuggestionsViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             try {
+                formState
                 formRepo.refreshForms()
-                formRepo.getAllForms().collect { formList ->
+//                _formDataState = _formDataState.
+//                formRepo.getAllForms().collect { formList ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        forms = formList
+//                        forms = formList
                     )
-                }
+//                }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(isLoading = false)
             }
