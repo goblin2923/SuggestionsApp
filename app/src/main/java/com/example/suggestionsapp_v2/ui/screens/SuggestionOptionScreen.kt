@@ -18,19 +18,18 @@ fun FormOptionScreen(
     option: FormData.Options,
     suggestionsViewModel: SuggestionsViewModel = viewModel(factory = SuggestionsViewModel.Factory)
 ) {
-//    val uiState by suggestionsViewModel.uiState.collectAsState()
-    val forms = suggestionsViewModel.formState.collectAsState()
+    val uiState by suggestionsViewModel.uiState.collectAsState()
+//    val forms = suggestionsViewModel.formState.collectAsState()
     Log.w(TAG, "FormOptionScreen: option is $option", )
-    // Filter forms by the selected option
-    val filteredForms = forms.value.filter { it.optionName == option }
+
+    val filteredForms = uiState.forms.filter {it.formData.optionName == option }
     Log.w(TAG, "FormOptionScreen: : $filteredForms", )
 
-
-    LazyColumn {
-        items(filteredForms) { formData ->
-            Text(text = "Name: ${formData.name}, Time: ${formData.time}, Suggestion: ${formData.suggestion}")
-        }
-    }
+//    LazyColumn {
+//        items(filteredForms) {  ->
+//            Text(text = "Name: ${formData.}, Time: ${formData.time}, Suggestion: ${formData.suggestion}")
+//        }
+//    }
 }
 
 

@@ -7,12 +7,14 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.suggestionsapp_v2.data.source.FormData
+import com.example.suggestionsapp_v2.data.source.UserData
 
 
-@Database(entities = [FormData::class], version = 2, exportSchema = false)
+@Database(entities = [FormData::class, UserData::class], version = 2, exportSchema = false)
 abstract class SuggestionsDatabase : RoomDatabase() {
 
     abstract val formDao: FormDao
+//    abstract val userDao: UserDao
 
     companion object {
         @Volatile

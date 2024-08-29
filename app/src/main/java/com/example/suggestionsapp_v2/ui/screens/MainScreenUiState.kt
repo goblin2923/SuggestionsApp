@@ -1,6 +1,6 @@
 package com.example.suggestionsapp_v2.ui.screens
 
-import com.example.suggestionsapp_v2.data.source.FormData
+import com.example.suggestionsapp_v2.data.source.FormWithUsers
 
 data class UiForms(
     val optionName:String,
@@ -8,5 +8,5 @@ data class UiForms(
 
 data class MainScreenUiState(
     val isLoading: Boolean = false,
-    val forms: List<FormData> = emptyList()
+    val forms: List<FormWithUsers> = emptyList()
 )

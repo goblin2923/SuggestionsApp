@@ -23,8 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.suggestionsapp_v2.data.source.FormData
+import com.example.suggestionsapp_v2.data.source.FormWithUsers
 import com.example.suggestionsapp_v2.ui.components.AnimatedCircle
 import com.example.suggestionsapp_v2.ui.components.BaseRow
+import io.ktor.client.request.forms.formData
 
 const val TAG = "easytosearch"
 
@@ -43,9 +45,10 @@ fun DisplayMainScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val formDataState = uiState.forms.sortedByDescending { formData -> formData.votes }
+//        val formDataState = mainScreenViewModel.formState.value.sortedByDescending { formData -> formData.formData.votes }
+        val formDataState = uiState.forms.sortedByDescending { formData -> formData.formData.votes }
         val colorList: List<Color> = formDataState.map { formData ->
-            Color(formData.color ?: 0)
+            Color(formData.formData.color ?: 0)
         }
         Column(
             modifier = modifier
@@ -59,7 +62,7 @@ fun DisplayMainScreen(
                 items = formDataState,
                 votes = { formData -> formData.votes },
                 colors = colorList,
-                totalVotes = formDataState.sumOf { total -> total.votes },
+                totalVotes = formDataState.sumOf { it.formData.votes },
             )
         }
         LazyColumn(
@@ -71,14 +74,14 @@ fun DisplayMainScreen(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top
         ) {
-            items(formDataState) { message ->
+            items(formDataState) { formData ->
                 BaseRow(
-                    color = Color(message.color ?: Color.Red.toArgb()),
-                    title = message.optionName.toString().lowercase().replaceFirstChar {
+                    color = Color(formData.formData.color ?: Color.Red.toArgb()),
+                    title = formData.formData.optionName.toString().lowercase().replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase(java.util.Locale.ENGLISH) else it.toString()
                         },
-                    votes = message.votes,
-                    modifier = Modifier.clickable { onAccountClick(message.optionName.toString()) },
+                    votes = formData.formData.votes,
+                    modifier = Modifier.clickable { onAccountClick(formData.formData.optionName.toString()) },
                 )
 
             }
@@ -90,7 +93,7 @@ fun DisplayMainScreen(
 @Composable
 fun DisplayCircle(
 //fun DisplayCircle(
-    items: List<FormData>,
+    items: List<FormWithUsers>,
     colors: List<Color>,
     votes: (FormData) -> Int,
     totalVotes: Int,
@@ -98,7 +101,7 @@ fun DisplayCircle(
 ) {
     Box(modifier = modifier) {
         AnimatedCircle(
-            proportions = items.extractProportions { votes(it) },
+            proportions = items.extractProportions { votes(it.formData) },
             colors = colors,
             Modifier
                 .padding(DEFAULT_PADDING)

@@ -138,10 +138,7 @@ fun DisplayFormNames(uiState: MainScreenUiState) {
     Column {
         uiState.forms.forEach { formData ->
             Text(
-                text = "Option: ${formData.optionName}, " +
-                        "Name: ${formData.name}, " +
-                        "Time: ${formData.time}, " +
-                        "Suggestion: ${formData.suggestion ?: "No suggestion"}"
+                text = "Option: ${formData.formData.optionName}, "
             )
         }
     }
