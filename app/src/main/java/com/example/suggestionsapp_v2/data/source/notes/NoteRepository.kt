@@ -23,9 +23,19 @@ class NoteRepository {
         return notes
     }
 
-    suspend fun addNote(note: List<Note>) {
-
+    suspend fun refreshNotes(): List<Note> {
+        val snapshot = notesRef.get().await()
+        val notes = mutableListOf<Note>()
+        for (child in snapshot.children) {
+            child.getValue<Note>()?.let {notes.add(it) }
+        }
+        return notes
     }
+
+    fun generateNoteId(): String {
+        return notesRef.push().key!!
+    }
+
 }
 
 const val dbRef = "https://suggestionsappdatabase-default-rtdb.asia-southeast1.firebasedatabase.app/"

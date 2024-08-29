@@ -17,18 +17,22 @@ interface FormDao {
 
     @Transaction
     @Query("SELECT * FROM FormData WHERE optionName = :optionName")
-    suspend fun getFormWithUsers(optionName: FormData.Options): FormWithUsers?
+    suspend fun getUserFormWithUsers(optionName: FormData.Options): FormWithUsers?
+
+    @Transaction
+    @Query("SELECT * FROM FormData WHERE optionName = :optionName")
+    suspend fun getFormWithUsers(optionName: FormData.Options): FormData
 
     @Query("SELECT * FROM FormData WHERE optionName = :optionName")
     fun getFormWithUsersFlow(optionName: FormData.Options): Flow<FormWithUsers>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertForm(formData: FormData)
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
+    @Update(onConflict = OnConflictStrategy.IGNORE)
     suspend fun updateForm(formData: FormData)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUser(userData: UserData)
 
     @Transaction
@@ -38,6 +42,9 @@ interface FormDao {
     @Transaction
     @Query("SELECT * FROM FormData")
     suspend fun getAllFormsWithUsers(): List<FormWithUsers>
+
+    @Query("SELECT * FROM UserData WHERE name = :userName AND formOptionName = :option")
+    suspend fun getUserForOption(userName: String, option: FormData.Options): UserData?
 }
 
 //@Dao

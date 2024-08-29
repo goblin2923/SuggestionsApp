@@ -1,5 +1,6 @@
 package com.example.suggestionsapp_v2.data.source
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.example.suggestionsapp_v2.SuggestionsApp
@@ -43,12 +44,11 @@ class DefaultFormRepository(
                         }
 
                         if (option != FormData.Options.NULL) {
-                            val existingFormWithUsers = localDataSource.getFormWithUsers(option)
+                            val existingFormWithUsers = localDataSource.getUserFormWithUsers(option)
+//                            Log.d("aaa", "refreshForms: userexits?$existingFormWithUsers, $userName")
 
                             if (existingFormWithUsers != null) {
-                                // Check if this user already exists for this form option
-                                val userExists = existingFormWithUsers.users.any { it.name == userName && it.suggestion == userSuggestion }
-
+                                val userExists = existingFormWithUsers.users.any { it.name == userName && it.formOptionName == option }
                                 if (!userExists) {
                                     // Insert new user and increment votes
                                     val newUser = UserData(
@@ -91,10 +91,16 @@ class DefaultFormRepository(
                         }
                     }
                 }
-
-                // Retrieve all forms with users to calculate total votes
+// Retrieve all forms with users
                 val allFormsWithUsers = localDataSource.getAllFormsWithUsers()
-                totalVotes = calcTotalVotes(allFormsWithUsers)
+
+                // Remove duplicates based on user name and option
+                val unduplicatedFormsWithUsers = allFormsWithUsers.map { formWithUsers ->
+                    val uniqueUsers = formWithUsers.users.distinctBy { it.formOptionName to it.name }
+                    formWithUsers.copy(users = uniqueUsers)
+                }
+                // Retrieve all forms with users to calculate total votes
+                totalVotes = calcTotalVotes(unduplicatedFormsWithUsers)
             }
 
         } catch (e: Exception) {
@@ -109,7 +115,7 @@ class DefaultFormRepository(
     fun getAllForms() = localDataSource.observeAll()
 
     suspend fun getUsersForForm(optionName: FormData.Options): FormWithUsers? {
-        val formWithUsers = localDataSource.getFormWithUsers(optionName)
+        val formWithUsers = localDataSource.getUserFormWithUsers(optionName)
         return formWithUsers
     }
 

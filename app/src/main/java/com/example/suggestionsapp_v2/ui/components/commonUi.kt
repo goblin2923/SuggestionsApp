@@ -116,7 +116,7 @@ fun BaseRow(
             ColorIndicator(
                 color = color, modifier = Modifier
             )
-            Spacer(Modifier.width(4.dp))
+            Spacer(Modifier.width(12.dp))
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()

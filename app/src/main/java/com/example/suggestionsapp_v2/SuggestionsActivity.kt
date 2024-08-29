@@ -39,6 +39,7 @@ import com.example.suggestionsapp_v2.ui.SuggestionsPage
 import com.example.suggestionsapp_v2.ui.components.SuggestionsNavTab
 import com.example.suggestionsapp_v2.ui.screens.mainScreen.DisplayMainScreen
 import com.example.suggestionsapp_v2.ui.screens.SuggestionOptionScreen.FormOptionScreen
+import com.example.suggestionsapp_v2.ui.screens.notesScreen.NotesScreen
 import com.example.suggestionsapp_v2.ui.screens.viewModels.SuggestionsViewModel
 
 class SuggestionsActivity : ComponentActivity() {
@@ -125,7 +126,7 @@ fun MainScreen(
                 }
                 composable(route = SuggestionsPage.route) {
                     Log.w("search", "second screen recomposing: ")
-//                    DisplayFormNames(uiState = uiState)
+                    NotesScreen()
                 }
                 composable(
                     route = FormOptionPage.routeWithArgs, arguments = FormOptionPage.arguments
@@ -134,7 +135,7 @@ fun MainScreen(
                         navBackStackEntry.arguments?.getString(FormOptionPage.optionArg)
                     if (optionName != null) {
                         val option = FormData.Options.valueOf(optionName)
-                        FormOptionScreen(option)
+                        FormOptionScreen(option, formDataState)
                     }
                 }
             }

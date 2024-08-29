@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.suggestionsapp_v2.data.source.FormData
+import com.example.suggestionsapp_v2.data.source.FormWithUsers
 import com.example.suggestionsapp_v2.ui.components.BaseRow
 import com.example.suggestionsapp_v2.ui.components.FormOptionDivider
 import com.example.suggestionsapp_v2.ui.screens.mainScreen.TAG
@@ -28,13 +29,14 @@ private const val TAG_S = "SuggestionOptionScreen"
 @Composable
 fun FormOptionScreen(
     option: FormData.Options,
-    suggestionsViewModel: SuggestionsViewModel = viewModel(factory = SuggestionsViewModel.Factory)
+    forms: List<FormWithUsers>
 ) {
 //    val uiState by suggestionsViewModel.uiState.collectAsState()
-    val forms = suggestionsViewModel.formState.collectAsState()
+//    val forms = suggestionsViewModel.formState.collectAsState()
     Log.w(TAG, "FormOptionScreen: option is $option")
+//    Log.d(TAG, "FormOptionScreen: forms are ${forms.value}")
 
-    val filteredForms = forms.value.filter { it.formData.optionName == option }
+    val filteredForms = forms.filter { it.formData.optionName == option }
 //    val filteredForms = uiState.forms.filter { it.formData.optionName == option }
     Column(
         modifier = Modifier
@@ -54,8 +56,10 @@ fun FormOptionScreen(
             LazyColumn(
 //            modifier = Modifier.clip(RoundedCornerShape(5))
             ) {
+                Log.d(TAG, "FormOptionScreen() called, $filteredForms")
                 items(filteredForms) { formWithUsers ->
                     val color = formWithUsers.formData.color!!
+
                     formWithUsers.users.forEach { formData ->
                         BaseRow(
                             color = Color(color),

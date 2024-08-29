@@ -11,7 +11,8 @@ data class FormWithUsers(
     @Embedded val formData: FormData,
     @Relation(
         parentColumn = "optionName",
-        entityColumn = "formOptionName"
+        entityColumn = "formOptionName",
+        entity = UserData::class
     )
     val users: List<UserData>
 )
