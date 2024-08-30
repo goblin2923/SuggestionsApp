@@ -17,8 +17,6 @@ class SuggestionsApp : Application() {
 
     lateinit var noteRepository: NoteRepository
 
-
-
     override fun onCreate() {
         super.onCreate()
         suggestionsDatabase = SuggestionsDatabase.getDatabase(applicationContext)

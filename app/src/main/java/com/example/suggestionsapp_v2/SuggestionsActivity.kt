@@ -54,7 +54,6 @@ class SuggestionsActivity : ComponentActivity() {
     }
 }
 
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
@@ -77,7 +76,6 @@ fun MainScreen(
             mutableStateOf<String?>(null)
         }
 
-//        val currentScreen = NavTabScreens.find { it.route == currentDestination?.route } ?: HomePage
         var currentScreen by remember { mutableStateOf<NavDestinations>(HomePage) }
         LaunchedEffect(currentDestination) {
             currentScreen = NavTabScreens.find { it.route == currentDestination?.route } ?: HomePage
@@ -86,8 +84,6 @@ fun MainScreen(
         val formDataState by remember(forms) { // Remember the sorted list
             mutableStateOf(forms.sortedByDescending { it.formData.votes })
         }
-        //val formDataState = forms.sortedByDescending { formData -> formData.formData.votes }
-//        val formDataState = uiState.forms.sortedByDescending { formData -> formData.formData.votes }
 
         Scaffold(bottomBar = {
             SuggestionsNavTab(
@@ -138,6 +134,7 @@ fun MainScreen(
                         navBackStackEntry.arguments?.getString(FormOptionPage.optionArg)
                     if (optionName != null) {
                         val option = FormData.Options.valueOf(optionName)
+
                         FormOptionScreen(option, formDataState, goBack = {
                             navController.navigateSingleTopTo(HomePage.route)
                         })
@@ -148,28 +145,14 @@ fun MainScreen(
     }
 }
 
-//@Composable
-//fun DisplayFormNames(uiState: MainScreenUiState) {
-//    Column {
-//        uiState.forms.forEach { formData ->
-//            Text(
-//                text = "Option: ${formData.formData.optionName}, "
-//            )
-//        }
-//    }
-//}
 
 
 fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) {
-    // Pop up to the start destination of the graph to
-    // avoid building up a large stack of destinations
-    // on the back stack as users select items
+
     popUpTo(this@navigateSingleTopTo.graph.findStartDestination().id) {
         saveState = true
     }
-    // Avoid multiple copies of the same destination when
-    // reselecting the same item
+
     launchSingleTop = true
-    // Restore state when reselecting a previously selected item
-    restoreState = true
+
 }

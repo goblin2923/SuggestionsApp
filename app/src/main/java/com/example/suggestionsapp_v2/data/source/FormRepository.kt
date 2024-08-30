@@ -1,15 +1,11 @@
 package com.example.suggestionsapp_v2.data.source
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.example.suggestionsapp_v2.SuggestionsApp
-import com.example.suggestionsapp_v2.data.source.local.ColorSet
 import com.example.suggestionsapp_v2.data.source.local.FormDao
 import com.example.suggestionsapp_v2.data.source.network.FormApiService
-//import com.example.suggestionsapp_v2.data.source.network.SuggestionsAPI
 import com.example.suggestionsapp_v2.data.source.network.SuggestionsApiService
-import kotlinx.coroutines.flow.Flow
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -98,16 +94,10 @@ class DefaultFormRepository(
                         }
                     }
                 }
-                // Retrieve all forms with users
+
                 val allFormsWithUsers = localDataSource.getAllFormsWithUsers()
 
-                // Remove duplicates based on user name and option
-                val unduplicatedFormsWithUsers = allFormsWithUsers.map { formWithUsers ->
-                    val uniqueUsers = formWithUsers.users.distinctBy { it.name to it.formOptionName }
-                    formWithUsers.copy(users = uniqueUsers)
-                }
-                // Retrieve all forms with users to calculate total votes
-                totalVotes = calcTotalVotes(unduplicatedFormsWithUsers)
+                totalVotes = calcTotalVotes(allFormsWithUsers)
             }
 
         } catch (e: Exception) {
@@ -198,3 +188,14 @@ class DefaultFormRepository(
 }
 
 
+val ColorSet: Set<Color> = setOf(
+    Color(0xFF489e9d),
+    Color(0xFF690105),
+    Color(0xFF4a2062),
+    Color(0xFF4b607c),
+    Color(0xFF749e48),
+    Color(0xFF72489e),
+    Color(0xFF003736),
+    Color(0xFF9e4849),
+    Color(0xFF7c674b),
+)
