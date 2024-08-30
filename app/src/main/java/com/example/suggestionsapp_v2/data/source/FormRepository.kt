@@ -10,6 +10,9 @@ import com.example.suggestionsapp_v2.data.source.network.FormApiService
 //import com.example.suggestionsapp_v2.data.source.network.SuggestionsAPI
 import com.example.suggestionsapp_v2.data.source.network.SuggestionsApiService
 import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class DefaultFormRepository(
     private val localDataSource: FormDao = SuggestionsApp.suggestionsDatabase.formDao,
@@ -31,7 +34,8 @@ class DefaultFormRepository(
                     val userName = formData.name
                     val userSuggestion =
                         if (formData.suggestions.isNullOrEmpty()) "No suggestions" else formData.suggestions
-                    val time = formData.timeStamp
+                    val timeStamp = formData.timeStamp
+                    val time = formatTime(timeStamp)
 
                     options.forEach { optionStr ->
                         val option = when (optionStr) {
@@ -45,12 +49,13 @@ class DefaultFormRepository(
 
                         if (option != FormData.Options.NULL) {
                             val existingFormWithUsers = localDataSource.getUserFormWithUsers(option)
-//                            Log.d("aaa", "refreshForms: userexits?$existingFormWithUsers, $userName")
 
                             if (existingFormWithUsers != null) {
-                                val userExists = existingFormWithUsers.users.any { it.name == userName && it.formOptionName == option }
-                                if (!userExists) {
-                                    // Insert new user and increment votes
+                                val existingUser = localDataSource.getUserForOption(userName, option)
+                                if (existingUser != null) {
+                                    val updatedUser = existingUser.copy(suggestion = userSuggestion)
+                                    localDataSource.updateUser(updatedUser)
+                                } else {
                                     val newUser = UserData(
                                         formOptionName = option,
                                         name = userName,
@@ -59,7 +64,9 @@ class DefaultFormRepository(
                                     )
                                     localDataSource.insertUser(newUser)
 
-                                    val updatedForm = existingFormWithUsers.formData.copy(votes = existingFormWithUsers.formData.votes + 1)
+                                    val updatedForm = existingFormWithUsers.formData.copy(
+                                        votes = existingFormWithUsers.formData.votes + 1
+                                    )
                                     localDataSource.updateForm(updatedForm)
                                 }
                             } else {
@@ -91,12 +98,12 @@ class DefaultFormRepository(
                         }
                     }
                 }
-// Retrieve all forms with users
+                // Retrieve all forms with users
                 val allFormsWithUsers = localDataSource.getAllFormsWithUsers()
 
                 // Remove duplicates based on user name and option
                 val unduplicatedFormsWithUsers = allFormsWithUsers.map { formWithUsers ->
-                    val uniqueUsers = formWithUsers.users.distinctBy { it.formOptionName to it.name }
+                    val uniqueUsers = formWithUsers.users.distinctBy { it.name to it.formOptionName }
                     formWithUsers.copy(users = uniqueUsers)
                 }
                 // Retrieve all forms with users to calculate total votes
@@ -127,6 +134,12 @@ class DefaultFormRepository(
         return data.sumOf { it.formData.votes }
     }
 
+    private fun formatTime(inputTime: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
+        val date: Date = inputFormat.parse(inputTime) ?: return ""
+        return outputFormat.format(date)
+    }
 //    suspend fun create(fID: Int, option: String, votes: Int, color: Int): Int {
 //        val formData = FormData(
 //            fId = fID,

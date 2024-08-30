@@ -2,11 +2,18 @@ package com.example.suggestionsapp_v2.ui.screens.SuggestionOptionScreen
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +28,7 @@ import com.example.suggestionsapp_v2.data.source.FormData
 import com.example.suggestionsapp_v2.data.source.FormWithUsers
 import com.example.suggestionsapp_v2.ui.components.BaseRow
 import com.example.suggestionsapp_v2.ui.components.FormOptionDivider
+import com.example.suggestionsapp_v2.ui.components.GoBack
 import com.example.suggestionsapp_v2.ui.screens.mainScreen.TAG
 import com.example.suggestionsapp_v2.ui.screens.viewModels.SuggestionsViewModel
 
@@ -29,12 +37,14 @@ private const val TAG_S = "SuggestionOptionScreen"
 @Composable
 fun FormOptionScreen(
     option: FormData.Options,
-    forms: List<FormWithUsers>
+    forms: List<FormWithUsers>,
+    goBack: () -> Unit,
 ) {
 //    val uiState by suggestionsViewModel.uiState.collectAsState()
 //    val forms = suggestionsViewModel.formState.collectAsState()
     Log.w(TAG, "FormOptionScreen: option is $option")
 //    Log.d(TAG, "FormOptionScreen: forms are ${forms.value}")
+
 
     val filteredForms = forms.filter { it.formData.optionName == option }
 //    val filteredForms = uiState.forms.filter { it.formData.optionName == option }
@@ -43,13 +53,15 @@ fun FormOptionScreen(
             .padding(horizontal = 2.dp)
             .background(MaterialTheme.colorScheme.background),
     ) {
+
         Column(
             Modifier
                 .weight(0.2f)
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            PrintFormOptionText(option = option.toString())
+
+            PrintFormOptionText(option = option.toString(), goBack = goBack)
         }
         Column(Modifier.weight(0.8f)) {
 
@@ -60,13 +72,18 @@ fun FormOptionScreen(
                 items(filteredForms) { formWithUsers ->
                     val color = formWithUsers.formData.color!!
 
+                    val displayedNames = mutableSetOf<String>()
                     formWithUsers.users.forEach { formData ->
-                        BaseRow(
-                            color = Color(color),
-                            name = formData.name,
-                            suggestions = formData.suggestion!!,
-                            time = formData.time!!
-                        )
+
+                        if (formData.name !in displayedNames) {
+                            BaseRow(
+                                color = Color(color),
+                                name = formData.name,
+                                suggestions = formData.suggestion!!,
+                                time = formData.time!!
+                            )
+                            displayedNames.add(formData.name)
+                        }
                     }
                 }
             }
@@ -76,31 +93,47 @@ fun FormOptionScreen(
 
 
 @Composable
-fun PrintFormOptionText(option: String, modifier: Modifier = Modifier) {
+fun PrintFormOptionText(
+    modifier: Modifier = Modifier,
+    goBack: () -> Unit = {},
+    option: String,
+    ) {
     Column(
-        modifier = modifier.padding(24.dp),
+        modifier = modifier.padding(12.dp),
     ) {
         Text(
             text = "Option: ",
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = 36.dp)
         )
-        Text(
-            text = option,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            style = MaterialTheme.typography.displayLarge,
-            modifier = Modifier
-                .padding(start = 12.dp)
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-        )
-        FormOptionDivider(color = MaterialTheme.colorScheme.outline)
+        Row(verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center)
+        {
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = "Go back",
+                Modifier.clickable { goBack() }
+                    .size(32.dp)
+                ,
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text = option,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                style = MaterialTheme.typography.displayLarge,
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .fillMaxWidth()
+            )
+            FormOptionDivider(color = MaterialTheme.colorScheme.outline)
+        }
     }
 }
 
 
 @Preview(showBackground = false)
 @Composable
-fun prpep() {
+fun Prpep() {
     PrintFormOptionText(option = "painting")
 }

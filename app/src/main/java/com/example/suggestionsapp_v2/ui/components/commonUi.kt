@@ -1,8 +1,14 @@
 package com.example.suggestionsapp_v2.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,13 +18,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -28,10 +42,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.ContentAlpha
 import androidx.wear.compose.material.LocalContentAlpha
+import com.google.firebase.Timestamp
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @Composable
@@ -47,11 +66,10 @@ fun BaseRow(
             .clearAndSetSemantics {
                 contentDescription = "Votes for $title: $votes"
             }
-            .background(color = MaterialTheme.colorScheme.onPrimary)
-        ,
+            .background(color = MaterialTheme.colorScheme.onPrimary),
         verticalAlignment = Alignment.CenterVertically,
 
-    ) {
+        ) {
         val typography = MaterialTheme.typography
         ColorIndicator(
             color = color, modifier = Modifier
@@ -100,13 +118,16 @@ fun BaseRow(
     suggestions: String,
     time: String,
 ) {
+    var expanded by remember { mutableStateOf(false) }
+
     Column(modifier = Modifier
-        .height(96.dp)
+        .height(IntrinsicSize.Min)
         .clearAndSetSemantics {
             contentDescription = "Votes by $name"
         }
-        .background(color = MaterialTheme.colorScheme.onPrimary),
-        verticalArrangement = Arrangement.Top) {
+        .background(color = MaterialTheme.colorScheme.onPrimary)
+        .clickable { expanded = !expanded }, verticalArrangement = Arrangement.Top
+    ) {
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
@@ -127,7 +148,6 @@ fun BaseRow(
                     color = textColor,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
-
                 Text(
                     text = time,
                     style = typography,
@@ -137,31 +157,146 @@ fun BaseRow(
             }
         }
 
-        Text(
-            text = "Suggestions:",
-            modifier = Modifier.padding(start = 24.dp),
-            color = MaterialTheme.colorScheme.primary
-        )
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp)
+        AnimatedVisibility(
+            visible = expanded, exit = fadeOut(), enter = fadeIn()
         ) {
-            item {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
+            ) {
+                Text(
+                    text = "Suggestions:", color = MaterialTheme.colorScheme.primary
+                )
                 Text(
                     text = suggestions,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Justify,
-                    color = MaterialTheme.colorScheme.primary)
+                    textAlign = TextAlign.Justify,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .padding(start = 4.dp)
+                )
             }
-
         }
     }
-
     FormOptionDivider()
 }
 
 @Composable
-fun FormOptionDivider(modifier: Modifier = Modifier, color: Color = MaterialTheme.colorScheme.background) {
+fun BaseRow(
+    modifier: Modifier = Modifier,
+    color: Color,
+    id: String,
+    title: String,
+    content: String,
+    time: Long,
+    onDelete: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier
+        .height(IntrinsicSize.Min)
+        .clearAndSetSemantics {
+            contentDescription = "title $title"
+        }
+        .background(color = MaterialTheme.colorScheme.onPrimary)
+        .clickable { expanded = !expanded }, verticalArrangement = Arrangement.Top
+    ) {
+        val typography = MaterialTheme.typography.bodyLarge
+        val textColor = MaterialTheme.colorScheme.onPrimaryContainer
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ColorIndicator(
+                color = color, modifier = Modifier
+            )
+            Spacer(Modifier.width(12.dp))
+
+            Box(
+//                contentAlignment = Alignment.,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = title,
+                    style = typography,
+                    color = textColor,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .align(Alignment.TopStart)
+                )
+
+                Icon(Icons.Default.Close,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable { onDelete(id) }
+                        .padding(horizontal = 8.dp)
+                        .align(Alignment.BottomEnd),
+                    tint = textColor)
+            }
+        }
+
+        AnimatedVisibility(visible = expanded, exit = fadeOut(), enter = fadeIn()) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Time:", color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = formatTimestamp(time),
+                        style = typography,
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        color = textColor
+                    )
+                }
+                Text(
+                    text = "Content:",
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+                Text(
+                    text = content,
+                    textAlign = TextAlign.Justify,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .padding(start = 4.dp)
+                )
+            }
+        }
+    }
+    FormOptionDivider()
+}
+
+@Composable
+fun GoBack(
+           goBack: () -> Unit){
+    Box(Modifier.padding(start = 12.dp, top = 24.dp)
+        .clickable { goBack }
+    ){
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+            contentDescription = null,
+            Modifier.clickable { goBack }
+                .size(32.dp),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+
+        )
+    }
+}
+
+@Composable
+fun FormOptionDivider(
+    modifier: Modifier = Modifier, color: Color = MaterialTheme.colorScheme.background
+) {
     HorizontalDivider(
         modifier = modifier, thickness = 2.dp, color = color
     )
@@ -190,11 +325,16 @@ private fun ColorIndicator(color: Color, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-
     BaseRow(
         color = Color.Red,
         name = "hammad",
         time = "12:00",
         suggestions = "adjksja nsakjlsansakjkf aslfjslaf akfjksa ksjaf ksajf sakfnkjfa saknj asjkfksfa "
     )
+}
+
+fun formatTimestamp(timestamp: Long): String {
+    val date = Date(timestamp)
+    val format = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
+    return format.format(date)
 }

@@ -44,7 +44,7 @@ fun SuggestionsNavTab(
     val color = MaterialTheme.colorScheme.onSurface
     val tabTintColors = remember {
         pages.map { Animatable(if (it == currentPage) color else color.copy(alpha = InactiveTabOpacity)) }
-    } // Now holds Animatable objects
+    }
 
     val animSpec = remember {
         tween<Color>(

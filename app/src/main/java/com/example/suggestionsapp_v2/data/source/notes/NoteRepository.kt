@@ -1,9 +1,13 @@
 package com.example.suggestionsapp_v2.data.source.notes
 
+import com.google.firebase.Timestamp
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class NoteRepository {
@@ -30,6 +34,10 @@ class NoteRepository {
             child.getValue<Note>()?.let {notes.add(it) }
         }
         return notes
+    }
+
+    suspend fun deleteNote(noteId: String){
+        notesRef.child(noteId).removeValue().await()
     }
 
     fun generateNoteId(): String {

@@ -36,6 +36,7 @@ import com.example.suggestionsapp_v2.ui.HomePage
 import com.example.suggestionsapp_v2.ui.NavDestinations
 import com.example.suggestionsapp_v2.ui.NavTabScreens
 import com.example.suggestionsapp_v2.ui.SuggestionsPage
+import com.example.suggestionsapp_v2.ui.components.GoBack
 import com.example.suggestionsapp_v2.ui.components.SuggestionsNavTab
 import com.example.suggestionsapp_v2.ui.screens.mainScreen.DisplayMainScreen
 import com.example.suggestionsapp_v2.ui.screens.SuggestionOptionScreen.FormOptionScreen
@@ -69,9 +70,12 @@ fun MainScreen(
             onRefresh = { suggestionsViewModel.refreshForms() },
         )
 
-        var navController = rememberNavController()
+        val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
+        var selectedOption by remember {
+            mutableStateOf<String?>(null)
+        }
 
 //        val currentScreen = NavTabScreens.find { it.route == currentDestination?.route } ?: HomePage
         var currentScreen by remember { mutableStateOf<NavDestinations>(HomePage) }
@@ -85,15 +89,14 @@ fun MainScreen(
         //val formDataState = forms.sortedByDescending { formData -> formData.formData.votes }
 //        val formDataState = uiState.forms.sortedByDescending { formData -> formData.formData.votes }
 
-        Scaffold(topBar = {},
-            bottomBar = {
-                SuggestionsNavTab(
-                    pages = NavTabScreens, onTabSelected = { newScreen ->
-                        navController.navigateSingleTopTo(newScreen.route)
-                        currentScreen = newScreen
-                    }, currentPage = currentScreen
-                )
-            },
+        Scaffold(bottomBar = {
+            SuggestionsNavTab(
+                pages = NavTabScreens, onTabSelected = { newScreen ->
+                    navController.navigateSingleTopTo(newScreen.route)
+                    currentScreen = newScreen
+                }, currentPage = currentScreen
+            )
+        },
             floatingActionButton = {},
             modifier = modifier,
             containerColor = MaterialTheme.colorScheme.surface,
@@ -110,8 +113,8 @@ fun MainScreen(
                             .padding(innerPadding)
                             .pullRefresh(pullRefreshState)
                     ) {
-                        DisplayMainScreen(formDataState = formDataState,
-//                            uiState = uiState,
+                        DisplayMainScreen(
+                            formDataState = formDataState,
                             onAccountClick = { optionName ->
                                 navController.navigateSingleTopTo("${FormOptionPage.route}/$optionName")
                             })
@@ -135,7 +138,9 @@ fun MainScreen(
                         navBackStackEntry.arguments?.getString(FormOptionPage.optionArg)
                     if (optionName != null) {
                         val option = FormData.Options.valueOf(optionName)
-                        FormOptionScreen(option, formDataState)
+                        FormOptionScreen(option, formDataState, goBack = {
+                            navController.navigateSingleTopTo(HomePage.route)
+                        })
                     }
                 }
             }

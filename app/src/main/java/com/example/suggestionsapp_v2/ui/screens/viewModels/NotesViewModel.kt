@@ -30,14 +30,6 @@ class NotesViewModel(
         }
     }
 
-
-    //    fun addNote(title: String, content: String) {
-//        viewModelScope.launch {
-//            val newNote =
-//                Note(id = noteRepository.generateNoteId(), title = title, content = content)
-//            noteRepository.addNote(newNote)
-//        }
-//    }
     fun addNote(title: String, content: String) {
         viewModelScope.launch {
             val newNote =
@@ -47,6 +39,13 @@ class NotesViewModel(
             _notes.value = noteRepository.getNotes()
 
 //             _notes.value = _notes.value += newNote
+        }
+    }
+
+    fun deleteNote(noteId: String) {
+        viewModelScope.launch {
+            noteRepository.deleteNote(noteId)
+            _notes.value = noteRepository.refreshNotes()
         }
     }
 

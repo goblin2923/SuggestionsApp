@@ -32,6 +32,9 @@ interface FormDao {
     @Update(onConflict = OnConflictStrategy.IGNORE)
     suspend fun updateForm(formData: FormData)
 
+    @Update
+    suspend fun updateUser(userData: UserData)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUser(userData: UserData)
 
