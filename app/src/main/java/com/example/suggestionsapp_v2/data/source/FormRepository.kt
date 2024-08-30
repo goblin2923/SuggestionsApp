@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.toArgb
 import com.example.suggestionsapp_v2.SuggestionsApp
 import com.example.suggestionsapp_v2.data.source.local.FormDao
 import com.example.suggestionsapp_v2.data.source.network.FormApiService
+import com.example.suggestionsapp_v2.data.source.network.NetworkDataclass
 import com.example.suggestionsapp_v2.data.source.network.SuggestionsApiService
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -26,77 +27,10 @@ class DefaultFormRepository(
                 var colorList = ColorSet.toMutableList()
 
                 networkForms.data.forEach { formData ->
-                    val options = formData.selectedOptions.split(',').map { it.trim() }
-                    val userName = formData.name
-                    val userSuggestion =
-                        if (formData.suggestions.isNullOrEmpty()) "No suggestions" else formData.suggestions
-                    val timeStamp = formData.timeStamp
-                    val time = formatTime(timeStamp)
-
-                    options.forEach { optionStr ->
-                        val option = when (optionStr) {
-                            "Painting" -> FormData.Options.PAINTING
-                            "Sketching" -> FormData.Options.SKETCHING
-                            "Mime" -> FormData.Options.MIME
-                            "Qawali night" -> FormData.Options.QAWALI
-                            "Fashion show" -> FormData.Options.FASHION
-                            else -> FormData.Options.NULL
-                        }
-
-                        if (option != FormData.Options.NULL) {
-                            val existingFormWithUsers = localDataSource.getUserFormWithUsers(option)
-
-                            if (existingFormWithUsers != null) {
-                                val existingUser = localDataSource.getUserForOption(userName, option)
-                                if (existingUser != null) {
-                                    val updatedUser = existingUser.copy(suggestion = userSuggestion)
-                                    localDataSource.updateUser(updatedUser)
-                                } else {
-                                    val newUser = UserData(
-                                        formOptionName = option,
-                                        name = userName,
-                                        suggestion = userSuggestion,
-                                        time = time
-                                    )
-                                    localDataSource.insertUser(newUser)
-
-                                    val updatedForm = existingFormWithUsers.formData.copy(
-                                        votes = existingFormWithUsers.formData.votes + 1
-                                    )
-                                    localDataSource.updateForm(updatedForm)
-                                }
-                            } else {
-                                // Assign color
-                                var color: Int = if (colorList.isNotEmpty()) {
-                                    colorList.first().toArgb()
-                                } else {
-                                    getRandomColor().toArgb()
-                                }
-                                colorList = colorList.drop(1).toMutableList()
-
-                                // Create a new form and insert
-                                val newForm = FormData(
-                                    optionName = option,
-                                    votes = 1,
-                                    color = color,
-                                )
-                                localDataSource.insertForm(newForm)
-
-                                // Insert the first user for this form option
-                                val newUser = UserData(
-                                    formOptionName = option,
-                                    name = userName,
-                                    suggestion = userSuggestion,
-                                    time = time
-                                )
-                                localDataSource.insertUser(newUser)
-                            }
-                        }
-                    }
+                    handleFormData(formData, colorList)
                 }
 
                 val allFormsWithUsers = localDataSource.getAllFormsWithUsers()
-
                 totalVotes = calcTotalVotes(allFormsWithUsers)
             }
 
@@ -105,6 +39,97 @@ class DefaultFormRepository(
         }
     }
 
+    private suspend fun handleFormData(formData: NetworkDataclass, colorList: MutableList<Color>) {
+        val options = formData.selectedOptions.split(',').map { it.trim() }
+        val userName = formData.name
+        val userSuggestion =
+            if (formData.suggestions.isNullOrEmpty()) "No suggestions" else formData.suggestions
+        val time = formatTime(formData.timeStamp)
+
+        options.forEach { optionStr ->
+            val option = mapOption(optionStr)
+            if (option != FormData.Options.NULL) {
+                processFormOption(option, userName, userSuggestion, time, colorList)
+            }
+        }
+    }
+
+
+    private fun mapOption(optionStr: String): FormData.Options {
+        return when (optionStr) {
+            "Painting" -> FormData.Options.PAINTING
+            "Sketching" -> FormData.Options.SKETCHING
+            "Mime" -> FormData.Options.MIME
+            "Qawali night" -> FormData.Options.QAWALI
+            "Fashion show" -> FormData.Options.FASHION
+            else -> FormData.Options.NULL
+        }
+    }
+
+
+    private suspend fun processFormOption(
+        option: FormData.Options,
+        userName: String,
+        userSuggestion: String,
+        time: String,
+        colorList: MutableList<Color>
+    ) {
+        val existingFormWithUsers = localDataSource.getUserFormWithUsers(option)
+
+        if (existingFormWithUsers != null) {
+            updateUserForOption(existingFormWithUsers, userName, userSuggestion, time)
+        } else {
+            createNewForm(option, userName, userSuggestion, time, colorList)
+        }
+    }
+
+    private suspend fun updateUserForOption(
+        existingFormWithUsers: FormWithUsers, userName: String, userSuggestion: String, time: String
+    ) {
+        val existingUser =
+            localDataSource.getUserForOption(userName, existingFormWithUsers.formData.optionName)
+        if (existingUser != null) {
+            val updatedUser = existingUser.copy(suggestion = userSuggestion)
+            localDataSource.updateUser(updatedUser)
+        } else {
+            insertNewUser(existingFormWithUsers.formData.optionName, userName, userSuggestion, time)
+            val updatedForm =
+                existingFormWithUsers.formData.copy(votes = existingFormWithUsers.formData.votes + 1)
+            localDataSource.updateForm(updatedForm)
+        }
+    }
+
+    private suspend fun createNewForm(
+        option: FormData.Options,
+        userName: String,
+        userSuggestion: String,
+        time: String,
+        colorList: MutableList<Color>
+    ) {
+        val color = assignColor(colorList)
+        val newForm = FormData(optionName = option, votes = 1, color = color)
+        localDataSource.insertForm(newForm)
+        insertNewUser(option, userName, userSuggestion, time)
+    }
+
+    private fun assignColor(colorList: MutableList<Color>): Int {
+        return if (colorList.isNotEmpty()) {
+            val color = colorList.first().toArgb()
+            colorList.removeAt(0)
+            color
+        } else {
+            getRandomColor().toArgb()
+        }
+    }
+
+    private suspend fun insertNewUser(
+        option: FormData.Options, userName: String, userSuggestion: String, time: String
+    ) {
+        val newUser = UserData(
+            formOptionName = option, name = userName, suggestion = userSuggestion, time = time
+        )
+        localDataSource.insertUser(newUser)
+    }
 
 
     fun getVotes() = totalVotes
