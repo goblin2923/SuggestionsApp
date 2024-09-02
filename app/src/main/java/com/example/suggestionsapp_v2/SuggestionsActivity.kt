@@ -1,7 +1,9 @@
 package com.example.suggestionsapp_v2
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
+import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -36,15 +40,44 @@ import com.example.suggestionsapp_v2.ui.HomePage
 import com.example.suggestionsapp_v2.ui.NavDestinations
 import com.example.suggestionsapp_v2.ui.NavTabScreens
 import com.example.suggestionsapp_v2.ui.SuggestionsPage
-import com.example.suggestionsapp_v2.ui.components.GoBack
 import com.example.suggestionsapp_v2.ui.components.SuggestionsNavTab
 import com.example.suggestionsapp_v2.ui.screens.mainScreen.DisplayMainScreen
 import com.example.suggestionsapp_v2.ui.screens.SuggestionOptionScreen.FormOptionScreen
 import com.example.suggestionsapp_v2.ui.screens.notesScreen.NotesScreen
+import com.example.suggestionsapp_v2.ui.screens.viewModels.SplashViewModel
 import com.example.suggestionsapp_v2.ui.screens.viewModels.SuggestionsViewModel
+import javax.inject.Inject
 
 class SuggestionsActivity : ComponentActivity() {
+    @get:Inject
+    val splashViewModel: SplashViewModel by lazy{
+        SplashViewModel()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen().apply {
+            setOnExitAnimationListener { viewProvider ->
+                ObjectAnimator.ofFloat(
+                    viewProvider.view, "scaleX", 0.5f, 0f
+                ).apply {
+                    interpolator = OvershootInterpolator()
+                    duration = 300
+                    doOnEnd { viewProvider.remove() }
+                    start()
+                }
+                ObjectAnimator.ofFloat(
+                    viewProvider.view, "scaleY", 0.5f, 0f
+                ).apply {
+                    interpolator = OvershootInterpolator()
+                    duration = 300
+                    doOnEnd { viewProvider.remove() }
+                    start()
+                }
+            }
+        }
+
+        splashScreen.setKeepOnScreenCondition {
+            splashViewModel.isSplashShow.value
+        }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -109,8 +142,7 @@ fun MainScreen(
                             .padding(innerPadding)
                             .pullRefresh(pullRefreshState)
                     ) {
-                        DisplayMainScreen(
-                            formDataState = formDataState,
+                        DisplayMainScreen(formDataState = formDataState,
                             onAccountClick = { optionName ->
                                 navController.navigateSingleTopTo("${FormOptionPage.route}/$optionName")
                             })
@@ -144,7 +176,6 @@ fun MainScreen(
         }
     }
 }
-
 
 
 fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) {

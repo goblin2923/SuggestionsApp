@@ -14,7 +14,6 @@ import com.example.suggestionsapp_v2.data.source.UserData
 abstract class SuggestionsDatabase : RoomDatabase() {
 
     abstract val formDao: FormDao
-//    abstract val userDao: UserDao
 
     companion object {
         @Volatile

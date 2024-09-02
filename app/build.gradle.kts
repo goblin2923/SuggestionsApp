@@ -7,6 +7,7 @@ plugins {
 
     id("kotlinx-serialization")
     id("com.google.gms.google-services")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -69,10 +70,15 @@ dependencies {
 
 //    firebase
     implementation(platform(libs.firebase.bom))
-
-    // Add the dependency for the Realtime Database library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation(libs.firebase.database)
+
+//    splash screen
+    implementation(libs.androidx.core.splashscreen.v120alpha01)
+
+
+//    hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 
 //    room
     implementation(libs.androidx.room.runtime)
@@ -89,7 +95,7 @@ dependencies {
 //    Test Dispatcher
     implementation (libs.kotlinx.coroutines.test)
 //    viewModel()
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation(libs.androidx.lifecycle.viewmodel.compose.v261)
 //    view model scope
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
@@ -112,3 +118,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
